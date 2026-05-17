@@ -112,12 +112,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           ? "employee"
           : null;
     if (!profileData || !primary) {
-      const fallbackRole =
-        ((profileData as AppProfile | null)?.email?.includes("admin")
+      const fallbackRole = (
+        (profileData as AppProfile | null)?.email?.includes("admin")
           ? "admin"
           : (profileData as AppProfile | null)?.email?.includes("manager")
             ? "manager"
-            : null) as AppRole | null;
+            : null
+      ) as AppRole | null;
       const fallback = fallbackRole ? demoSessionForRole(fallbackRole) : null;
       if (fallback) {
         setProfile(fallback.profile);

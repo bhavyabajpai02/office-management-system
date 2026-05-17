@@ -1,13 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  AlertCircle,
-  BarChart3,
-  ClipboardCheck,
-  Share2,
-  TrendingUp,
-  Users,
-} from "lucide-react";
+import { AlertCircle, BarChart3, ClipboardCheck, Share2, TrendingUp, Users } from "lucide-react";
 import { PageHeader, SectionCard } from "@/components/PageHeader";
 import { StatCard } from "@/components/StatCard";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -60,10 +53,7 @@ function ManagerDashboard() {
   const { data: team = demoTeam } = useQuery({
     queryKey: ["my-team", user?.id],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("manager_id", user!.id);
+      const { data } = await supabase.from("profiles").select("*").eq("manager_id", user!.id);
       if (!data || data.length === 0) {
         const snapshot = getEnterpriseSnapshot();
         const demoEmployees = snapshot.users.filter((item) => item.role === "employee");
@@ -91,9 +81,7 @@ function ManagerDashboard() {
       const ids = team.map((member) => member.id);
       const { data } = await supabase
         .from("goal_sheets")
-        .select(
-          "*, profiles!goal_sheets_employee_id_fkey(full_name, department)",
-        )
+        .select("*, profiles!goal_sheets_employee_id_fkey(full_name, department)")
         .in("employee_id", ids)
         .eq("status", "submitted");
       return data ?? [];
@@ -101,9 +89,13 @@ function ManagerDashboard() {
     enabled: !!user && team.length > 0 && !team[0]?.id?.startsWith("demo"),
   });
 
+  const { data: snapshot } = useQuery({
+    queryKey: ["enterprise-snapshot"],
+    queryFn: () => getEnterpriseSnapshot(),
+  });
+
   const avgProgress = Math.round(
-    team.reduce((sum, member) => sum + Number(member.progress ?? 75), 0) /
-      Math.max(team.length, 1),
+    team.reduce((sum, member) => sum + Number(member.progress ?? 75), 0) / Math.max(team.length, 1),
   );
   const delayed = team.filter((member) => Number(member.progress ?? 0) < 70).length;
   const approvalCount = pending.length || getDemoApprovalSheets().length;
@@ -131,9 +123,24 @@ function ManagerDashboard() {
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Team size" value={team.length} icon={<Users className="h-4 w-4" />} />
-        <StatCard label="Pending approvals" value={approvalCount} hint="goal sheets" icon={<ClipboardCheck className="h-4 w-4" />} />
-        <StatCard label="Avg. team progress" value={`${avgProgress}%`} hint="this quarter" icon={<TrendingUp className="h-4 w-4" />} />
-        <StatCard label="Delayed goals" value={delayed} hint="coach this week" icon={<AlertCircle className="h-4 w-4" />} />
+        <StatCard
+          label="Pending approvals"
+          value={approvalCount}
+          hint="goal sheets"
+          icon={<ClipboardCheck className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Avg. team progress"
+          value={`${avgProgress}%`}
+          hint="this quarter"
+          icon={<TrendingUp className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Delayed goals"
+          value={delayed}
+          hint="coach this week"
+          icon={<AlertCircle className="h-4 w-4" />}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
@@ -177,9 +184,7 @@ function ManagerDashboard() {
                   ]
               ).map((sheet: any) => (
                 <TableRow key={sheet.id}>
-                  <TableCell className="font-medium">
-                    {sheet.profiles?.full_name}
-                  </TableCell>
+                  <TableCell className="font-medium">{sheet.profiles?.full_name}</TableCell>
                   <TableCell className="text-muted-foreground">
                     {sheet.profiles?.department}
                   </TableCell>
@@ -195,18 +200,33 @@ function ManagerDashboard() {
         <SectionCard title="Manager signals" description="Recommended actions for this week.">
           <div className="space-y-3">
             {[
-              ["Approval SLA", "3 sheets are close to the 2-day review policy"],
-              ["Shared goal health", "Customer retention objective is 78% on track"],
-              ["Engagement", "Two reports have not updated Q2 check-ins"],
+              [
+                "Approval Queue",
+                pending.length > 0
+                  ? `${pending.length} sheets are waiting for your review`
+                  : approvalCount > 0
+                    ? `${approvalCount} sheets are waiting for your review`
+                    : "All reviews are up to date",
+              ],
+              [
+                "Goal Health",
+                snapshot
+                  ? `${snapshot.kpis.goals} active goals being tracked`
+                  : "Customer retention objective is 78% on track",
+              ],
+              [
+                "Engagement",
+                snapshot
+                  ? `Check-in coverage is currently ${snapshot.kpis.checkInCoverage}%`
+                  : "Two reports have not updated Q2 check-ins",
+              ],
             ].map(([title, body]) => (
               <div key={title} className="rounded-lg border bg-muted/25 p-3">
                 <div className="flex items-center justify-between gap-3">
                   <div className="font-medium">{title}</div>
                   <Badge variant="secondary">Actionable</Badge>
                 </div>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  {body}
-                </p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">{body}</p>
               </div>
             ))}
           </div>
@@ -228,9 +248,7 @@ function ManagerDashboard() {
               {team.map((member) => (
                 <TableRow key={member.id}>
                   <TableCell className="font-medium">{member.full_name}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {member.job_title}
-                  </TableCell>
+                  <TableCell className="text-muted-foreground">{member.job_title}</TableCell>
                   <TableCell>{member.department}</TableCell>
                   <TableCell className="min-w-[170px]">
                     <div className="flex items-center gap-2">
@@ -248,9 +266,22 @@ function ManagerDashboard() {
 
         <SectionCard title="Department analytics">
           <div className="space-y-3">
-            <Signal label="Approval throughput" value="82%" />
-            <Signal label="Check-in coverage" value="91%" />
-            <Signal label="Delayed task reduction" value="18%" />
+            <Signal
+              label="Approval throughput"
+              value={
+                snapshot
+                  ? `${Math.round((snapshot.kpis.approved / Math.max(1, snapshot.kpis.submitted + snapshot.kpis.approved)) * 100)}%`
+                  : "82%"
+              }
+            />
+            <Signal
+              label="Check-in coverage"
+              value={snapshot ? `${snapshot.kpis.checkInCoverage}%` : "91%"}
+            />
+            <Signal
+              label="Open escalations"
+              value={snapshot ? String(snapshot.kpis.openEscalations) : "0"}
+            />
             <Button asChild className="w-full" variant="outline">
               <Link to="/manager/analytics">
                 <BarChart3 className="mr-1.5 h-4 w-4" /> Open team analytics

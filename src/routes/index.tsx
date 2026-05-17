@@ -19,11 +19,18 @@ import {
   X,
   Zap,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useAuth, roleDashboardPath } from "@/lib/auth-context";
+import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -58,7 +65,7 @@ function LandingPage() {
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/88 text-white backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center gap-2">
+          {/* <Link to="/" className="flex items-center gap-2">
             <div className="grid h-9 w-9 place-items-center rounded-lg bg-white text-slate-950">
               <PanelsTopLeft className="h-5 w-5" />
             </div>
@@ -66,7 +73,10 @@ function LandingPage() {
               <div className="text-sm font-semibold leading-none">Momentum AI</div>
               <div className="text-[11px] text-slate-400">Workflow OS</div>
             </div>
-          </Link>
+          </Link> */}
+          <Link to="/" className="flex items-center">
+  <Logo className="text-white" />
+</Link>
 
           <nav className="hidden items-center gap-1 md:flex">
             {nav.map((item) => (
@@ -81,7 +91,11 @@ function LandingPage() {
           </nav>
 
           <div className="hidden items-center gap-2 md:flex">
-            <Button asChild variant="ghost" className="text-white hover:bg-white/10 hover:text-white">
+            <Button
+              asChild
+              variant="ghost"
+              className="text-white hover:bg-white/10 hover:text-white"
+            >
               <Link to={user ? dashboardPath : "/login"}>{user ? "Open dashboard" : "Login"}</Link>
             </Button>
             <Button asChild className="bg-white text-slate-950 hover:bg-slate-200">
@@ -133,7 +147,8 @@ function LandingPage() {
                 Momentum AI
               </h1>
               <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-300">
-                Enterprise workflow management for goals, check-ins, approvals, audit trails, and executive analytics in one polished operating layer.
+                Enterprise workflow management for goals, check-ins, approvals, audit trails, and
+                executive analytics in one polished operating layer.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg" className="bg-white text-slate-950 hover:bg-slate-200">
@@ -152,7 +167,10 @@ function LandingPage() {
               </div>
               <div className="mt-10 grid max-w-xl grid-cols-3 gap-3">
                 {metrics.map((metric) => (
-                  <div key={metric.label} className="rounded-lg border border-white/10 bg-white/[0.06] p-3 backdrop-blur">
+                  <div
+                    key={metric.label}
+                    className="rounded-lg border border-white/10 bg-white/[0.06] p-3 backdrop-blur"
+                  >
                     <div className="flex items-center gap-2">
                       <span className={`h-2 w-2 rounded-full ${metric.tone}`} />
                       <span className="text-xs text-slate-400">{metric.label}</span>
@@ -168,9 +186,13 @@ function LandingPage() {
                 <div className="mb-4 flex items-center justify-between">
                   <div>
                     <div className="text-sm font-medium">Executive Command Center</div>
-                    <div className="text-xs text-slate-400">Live goal health across departments</div>
+                    <div className="text-xs text-slate-400">
+                      Live goal health across departments
+                    </div>
                   </div>
-                  <Badge className="bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/15">Live</Badge>
+                  <Badge className="bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/15">
+                    Live
+                  </Badge>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-3">
                   {[
@@ -178,7 +200,10 @@ function LandingPage() {
                     ["42", "Pending reviews"],
                     ["6", "At-risk teams"],
                   ].map(([value, label]) => (
-                    <div key={label} className="rounded-lg border border-white/10 bg-slate-950/45 p-3">
+                    <div
+                      key={label}
+                      className="rounded-lg border border-white/10 bg-slate-950/45 p-3"
+                    >
                       <div className="text-2xl font-semibold">{value}</div>
                       <div className="text-xs text-slate-400">{label}</div>
                     </div>
@@ -202,7 +227,10 @@ function LandingPage() {
                           <span>{value}%</span>
                         </div>
                         <div className="h-2 rounded-full bg-white/10">
-                          <div className={`h-2 rounded-full ${color}`} style={{ width: `${value}%` }} />
+                          <div
+                            className={`h-2 rounded-full ${color}`}
+                            style={{ width: `${value}%` }}
+                          />
                         </div>
                       </div>
                     ))}
@@ -212,12 +240,17 @@ function LandingPage() {
                   <div className="rounded-lg border border-white/10 bg-slate-950/45 p-4">
                     <MessageSquareText className="mb-3 h-5 w-5 text-sky-300" />
                     <div className="text-sm font-medium">AI goal draft</div>
-                    <p className="mt-1 text-xs leading-5 text-slate-400">Reduce enterprise support resolution time by 22% with Q3 automation milestones.</p>
+                    <p className="mt-1 text-xs leading-5 text-slate-400">
+                      Reduce enterprise support resolution time by 22% with Q3 automation
+                      milestones.
+                    </p>
                   </div>
                   <div className="rounded-lg border border-white/10 bg-slate-950/45 p-4">
                     <FileSearch className="mb-3 h-5 w-5 text-emerald-300" />
                     <div className="text-sm font-medium">Audit ready</div>
-                    <p className="mt-1 text-xs leading-5 text-slate-400">Every approval, edit, and check-in event is searchable and exportable.</p>
+                    <p className="mt-1 text-xs leading-5 text-slate-400">
+                      Every approval, edit, and check-in event is searchable and exportable.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -231,24 +264,56 @@ function LandingPage() {
                     <div className="text-xs text-slate-400">Manager queue updated</div>
                   </div>
                 </div>
-                <p className="text-xs leading-5 text-slate-300">3 quarterly goal sheets need review before Friday SLA.</p>
+                <p className="text-xs leading-5 text-slate-300">
+                  3 quarterly goal sheets need review before Friday SLA.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
         <section id="features" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <SectionIntro eyebrow="Platform" title="Everything performance teams need to run the quarter" />
+          <SectionIntro
+            eyebrow="Platform"
+            title="Everything performance teams need to run the quarter"
+          />
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {[
-              [Target, "Goal architecture", "Create individual, shared, and department goals with weightage, targets, and quarterly milestones."],
-              [ClipboardCheck, "Approval workflows", "Managers review, approve, reject, or request rework with clear status transitions."],
-              [Sparkles, "AI assistance", "Draft SMART goals, KPIs, performance feedback, and weekly summaries in seconds."],
-              [BarChart3, "Executive analytics", "Track completion, delayed goals, department health, and approval velocity."],
-              [ShieldCheck, "Audit automation", "Every meaningful workflow event is captured for HR and compliance review."],
-              [Users, "Role portals", "Employees, managers, and admins each get focused dashboards and action queues."],
+              [
+                Target,
+                "Goal architecture",
+                "Create individual, shared, and department goals with weightage, targets, and quarterly milestones.",
+              ],
+              [
+                ClipboardCheck,
+                "Approval workflows",
+                "Managers review, approve, reject, or request rework with clear status transitions.",
+              ],
+              [
+                Sparkles,
+                "AI assistance",
+                "Draft SMART goals, KPIs, performance feedback, and weekly summaries in seconds.",
+              ],
+              [
+                BarChart3,
+                "Executive analytics",
+                "Track completion, delayed goals, department health, and approval velocity.",
+              ],
+              [
+                ShieldCheck,
+                "Audit automation",
+                "Every meaningful workflow event is captured for HR and compliance review.",
+              ],
+              [
+                Users,
+                "Role portals",
+                "Employees, managers, and admins each get focused dashboards and action queues.",
+              ],
             ].map(([Icon, title, body]) => (
-              <Card key={title as string} className="border-border/70 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+              <Card
+                key={title as string}
+                className="border-border/70 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+              >
                 <CardContent className="p-5">
                   <div className="mb-4 grid h-10 w-10 place-items-center rounded-lg bg-primary text-primary-foreground">
                     <Icon className="h-5 w-5" />
@@ -263,13 +328,21 @@ function LandingPage() {
 
         <section id="workflow" className="bg-slate-950 py-20 text-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <SectionIntro eyebrow="Workflow" title="From goal creation to audit-ready outcomes" inverse />
+            <SectionIntro
+              eyebrow="Workflow"
+              title="From goal creation to audit-ready outcomes"
+              inverse
+            />
             <div className="grid gap-4 lg:grid-cols-4">
               {[
                 ["01", "Create", "Employees draft goals or accept shared department objectives."],
                 ["02", "Approve", "Managers review weightage, KPIs, and alignment before lock-in."],
                 ["03", "Check in", "Quarterly updates capture actuals, comments, and status."],
-                ["04", "Analyze", "Admins monitor risk, delays, audit trails, and performance trends."],
+                [
+                  "04",
+                  "Analyze",
+                  "Admins monitor risk, delays, audit trails, and performance trends.",
+                ],
               ].map(([step, title, body]) => (
                 <div key={step} className="rounded-xl border border-white/10 bg-white/[0.06] p-5">
                   <div className="mb-8 text-sm text-slate-400">{step}</div>
@@ -281,15 +354,29 @@ function LandingPage() {
           </div>
         </section>
 
-        <section id="ai" className="mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:px-8">
+        <section
+          id="ai"
+          className="mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:px-8"
+        >
           <div>
-            <SectionIntro eyebrow="AI Assistance" title="A Notion-style assistant for better goals and better reviews" />
+            <SectionIntro
+              eyebrow="AI Assistance"
+              title="A Notion-style assistant for better goals and better reviews"
+            />
             <p className="text-sm leading-7 text-muted-foreground">
-              Momentum AI gives teams structured, believable support even without a live model backend: goal generation, KPI suggestions, feedback prompts, and weekly summaries.
+              Momentum AI gives teams structured, believable support even without a live model
+              backend: goal generation, KPI suggestions, feedback prompts, and weekly summaries.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
-              {["Generate quarterly goals", "Improve goal quality", "Suggest KPIs", "Performance insights"].map((item) => (
-                <Badge key={item} variant="secondary">{item}</Badge>
+              {[
+                "Generate quarterly goals",
+                "Improve goal quality",
+                "Suggest KPIs",
+                "Performance insights",
+              ].map((item) => (
+                <Badge key={item} variant="secondary">
+                  {item}
+                </Badge>
               ))}
             </div>
             <Button asChild className="mt-6 w-fit">
@@ -306,17 +393,22 @@ function LandingPage() {
               </div>
             </div>
             <CardContent className="space-y-4 p-5">
-              <div className="rounded-lg bg-muted/60 p-4 text-sm">Generate team objectives for a support organization focused on customer retention.</div>
+              <div className="rounded-lg bg-muted/60 p-4 text-sm">
+                Generate team objectives for a support organization focused on customer retention.
+              </div>
               <div className="rounded-lg border bg-background p-4">
                 <div className="mb-2 flex items-center gap-2 text-sm font-medium">
                   <Sparkles className="h-4 w-4 text-accent" /> Suggested objective
                 </div>
                 <p className="text-sm leading-6 text-muted-foreground">
-                  Improve enterprise customer retention by reducing high-severity ticket reopen rates by 18% and publishing two proactive health-review playbooks by Q4.
+                  Improve enterprise customer retention by reducing high-severity ticket reopen
+                  rates by 18% and publishing two proactive health-review playbooks by Q4.
                 </p>
                 <div className="mt-4 grid gap-2 sm:grid-cols-3">
                   {["KPI: Reopen rate", "Target: -18%", "Owner: CS Ops"].map((item) => (
-                    <div key={item} className="rounded-md bg-muted/50 px-3 py-2 text-xs">{item}</div>
+                    <div key={item} className="rounded-md bg-muted/50 px-3 py-2 text-xs">
+                      {item}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -356,7 +448,10 @@ function LandingPage() {
                   "Configurable notifications, data export, and session controls",
                   "Approval states that keep submitted and locked goals protected",
                 ].map((item) => (
-                  <div key={item} className="flex items-start gap-3 rounded-lg border bg-card p-3 text-sm">
+                  <div
+                    key={item}
+                    className="flex items-start gap-3 rounded-lg border bg-card p-3 text-sm"
+                  >
                     <CheckCircle2 className="mt-0.5 h-4 w-4 text-success" />
                     <span>{item}</span>
                   </div>
@@ -376,7 +471,10 @@ function LandingPage() {
                     ["Quarterly data retention", "36 months"],
                     ["Session timeout policy", "8 hours"],
                   ].map(([label, value]) => (
-                    <div key={label} className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2">
+                    <div
+                      key={label}
+                      className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2"
+                    >
                       <span className="text-muted-foreground">{label}</span>
                       <span className="font-medium">{value}</span>
                     </div>
@@ -406,12 +504,23 @@ function LandingPage() {
         </section>
 
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <SectionIntro eyebrow="Plans" title="Flexible enough for a hackathon demo and an MVP story" />
+          <SectionIntro
+            eyebrow="Plans"
+            title="Flexible enough for a hackathon demo and an MVP story"
+          />
           <div className="grid gap-4 md:grid-cols-3">
             {[
-              ["Starter", "Portfolio demo", ["Role dashboards", "AI assistant mock", "Responsive workflow UI"]],
+              [
+                "Starter",
+                "Portfolio demo",
+                ["Role dashboards", "AI assistant mock", "Responsive workflow UI"],
+              ],
               ["Growth", "MVP pilot", ["Supabase workflows", "Audit exports", "Admin analytics"]],
-              ["Enterprise", "Recruiter walkthrough", ["Security controls", "Escalations", "Executive reporting"]],
+              [
+                "Enterprise",
+                "Recruiter walkthrough",
+                ["Security controls", "Escalations", "Executive reporting"],
+              ],
             ].map(([name, caption, features]) => (
               <Card key={name as string} className="border-border/70">
                 <CardContent className="p-5">
@@ -435,9 +544,18 @@ function LandingPage() {
             <SectionIntro eyebrow="FAQ" title="Common questions" center />
             <Accordion type="single" collapsible className="rounded-xl border bg-card px-4">
               {[
-                ["Does this require a live AI backend?", "No. The current assistant simulates realistic structured AI responses and can be connected to a model API later."],
-                ["Can each role see different workflows?", "Yes. Employees, managers, and admins have separate dashboards, navigation, and action queues."],
-                ["Is the app demo-ready without full production data?", "Yes. Key pages use polished mock fallbacks where live data is not available, so dashboards never feel empty."],
+                [
+                  "Does this require a live AI backend?",
+                  "No. The current assistant simulates realistic structured AI responses and can be connected to a model API later.",
+                ],
+                [
+                  "Can each role see different workflows?",
+                  "Yes. Employees, managers, and admins have separate dashboards, navigation, and action queues.",
+                ],
+                [
+                  "Is the app demo-ready without full production data?",
+                  "Yes. Key pages use polished mock fallbacks where live data is not available, so dashboards never feel empty.",
+                ],
               ].map(([q, a], index) => (
                 <AccordionItem key={q} value={`item-${index}`}>
                   <AccordionTrigger className="text-left">
@@ -460,8 +578,14 @@ function LandingPage() {
             </div>
             <span className="text-sm font-medium">Momentum AI</span>
           </div>
-          <div className="text-sm text-slate-400">Enterprise workflow management for modern teams.</div>
-          <Button asChild variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+          <div className="text-sm text-slate-400">
+            Enterprise workflow management for modern teams.
+          </div>
+          <Button
+            asChild
+            variant="outline"
+            className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+          >
             <Link to="/login">Login</Link>
           </Button>
         </div>
@@ -483,10 +607,14 @@ function SectionIntro({
 }) {
   return (
     <div className={center ? "mb-10 text-center" : "mb-10"}>
-      <div className={`text-xs font-semibold uppercase tracking-[0.18em] ${inverse ? "text-sky-300" : "text-accent"}`}>
+      <div
+        className={`text-xs font-semibold uppercase tracking-[0.18em] ${inverse ? "text-sky-300" : "text-accent"}`}
+      >
         {eyebrow}
       </div>
-      <h2 className={`mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl ${inverse ? "text-white" : "text-foreground"} ${center ? "mx-auto" : ""}`}>
+      <h2
+        className={`mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl ${inverse ? "text-white" : "text-foreground"} ${center ? "mx-auto" : ""}`}
+      >
         {title}
       </h2>
     </div>

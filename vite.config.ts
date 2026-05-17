@@ -12,41 +12,35 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
-//   vite: {
-//     resolve: {
-//       alias: {
-//         // Fix runtime ESM import mismatch for React 19 environments.
-//         // Some bundles may try to import the ESM-shim entrypoint that doesn't
-//         // correctly re-export `useSyncExternalStore`.
-//         // "use-sync-external-store/shim": "use-sync-external-store",
-//       },
-//     },
-//     optimizeDeps: {
-//       noDiscovery: true,
-//       include: [],
-//     },
-//   },
-// });
-vite: {
-  resolve: {
-    alias: {
-      // "use-sync-external-store/shim":
-      //   "/src/lib/react-sync-store.ts",
+  //   vite: {
+  //     resolve: {
+  //       alias: {
+  //         // Fix runtime ESM import mismatch for React 19 environments.
+  //         // Some bundles may try to import the ESM-shim entrypoint that doesn't
+  //         // correctly re-export `useSyncExternalStore`.
+  //         // "use-sync-external-store/shim": "use-sync-external-store",
+  //       },
+  //     },
+  //     optimizeDeps: {
+  //       noDiscovery: true,
+  //       include: [],
+  //     },
+  //   },
+  // });
+  vite: {
+    resolve: {
+      alias: {
+        // "use-sync-external-store/shim":
+        //   "/src/lib/react-sync-store.ts",
 
-      // "use-sync-external-store":
-      //   "/src/lib/react-sync-store.ts",
-      "use-sync-external-store/shim/with-selector":
-    "use-sync-external-store/with-selector",
+        // "use-sync-external-store":
+        //   "/src/lib/react-sync-store.ts",
+        "use-sync-external-store/shim/with-selector": "use-sync-external-store/with-selector",
+      },
+    },
+
+    optimizeDeps: {
+      include: ["react", "react-dom", "@tanstack/react-router", "@tanstack/react-store"],
     },
   },
-
-  optimizeDeps: {
-    include: [
-      "react",
-      "react-dom",
-      "@tanstack/react-router",
-      "@tanstack/react-store",
-    ],
-  },
-},
 });

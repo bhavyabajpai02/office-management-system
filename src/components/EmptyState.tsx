@@ -5,12 +5,7 @@ interface EmptyStateProps {
   action?: React.ReactNode;
 }
 
-export function EmptyState({
-  icon,
-  title,
-  description,
-  action,
-}: EmptyStateProps) {
+export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
       <div className="rounded-xl border border-dashed border-border/80 bg-muted/30 px-6 py-8">

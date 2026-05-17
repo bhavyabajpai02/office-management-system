@@ -8,12 +8,38 @@ import { StatCard } from "@/components/StatCard";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { getDemoUsers, inviteDemoUser, updateDemoUser } from "@/lib/demo-workflows";
 
@@ -62,7 +88,9 @@ function UsersPage() {
       return profiles.map((profile) => ({
         ...profile,
         status: "active",
-        user_roles: (roles ?? []).filter((role) => role.user_id === profile.id).map((role) => ({ role: role.role })),
+        user_roles: (roles ?? [])
+          .filter((role) => role.user_id === profile.id)
+          .map((role) => ({ role: role.role })),
       })) as UserRow[];
     },
   });
@@ -71,7 +99,8 @@ function UsersPage() {
 
   const filtered = useMemo(() => {
     return visibleUsers.filter((user) => {
-      const hay = `${user.full_name ?? ""} ${user.email ?? ""} ${user.department ?? ""} ${user.job_title ?? ""} ${user.user_roles?.[0]?.role ?? ""}`.toLowerCase();
+      const hay =
+        `${user.full_name ?? ""} ${user.email ?? ""} ${user.department ?? ""} ${user.job_title ?? ""} ${user.user_roles?.[0]?.role ?? ""}`.toLowerCase();
       return hay.includes(search.toLowerCase());
     });
   }, [visibleUsers, search]);
@@ -79,8 +108,16 @@ function UsersPage() {
   const exportUsers = () => {
     const csv = [
       ["Name", "Email", "Department", "Title", "Role"],
-      ...filtered.map((user) => [user.full_name ?? "", user.email ?? "", user.department ?? "", user.job_title ?? "", user.user_roles?.[0]?.role ?? "employee"]),
-    ].map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n");
+      ...filtered.map((user) => [
+        user.full_name ?? "",
+        user.email ?? "",
+        user.department ?? "",
+        user.job_title ?? "",
+        user.user_roles?.[0]?.role ?? "employee",
+      ]),
+    ]
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -91,7 +128,8 @@ function UsersPage() {
     toast.success("Users exported");
   };
 
-  const roleCount = (role: string) => visibleUsers.filter((user) => user.user_roles?.[0]?.role === role).length;
+  const roleCount = (role: string) =>
+    visibleUsers.filter((user) => user.user_roles?.[0]?.role === role).length;
 
   return (
     <div>
@@ -100,7 +138,9 @@ function UsersPage() {
         description="Manage employees, managers, admins, departments, and reporting visibility."
         actions={
           <>
-            <Button variant="outline" onClick={exportUsers}><Download className="mr-1.5 h-4 w-4" /> Export</Button>
+            <Button variant="outline" onClick={exportUsers}>
+              <Download className="mr-1.5 h-4 w-4" /> Export
+            </Button>
             <Button onClick={() => setInviteOpen(true)}>
               <MailPlus className="mr-1.5 h-4 w-4" /> Invite user
             </Button>
@@ -109,19 +149,44 @@ function UsersPage() {
       />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total users" value={visibleUsers.length} icon={<Users className="h-4 w-4" />} />
-        <StatCard label="Employees" value={roleCount("employee")} icon={<UserCog className="h-4 w-4" />} />
-        <StatCard label="Managers" value={roleCount("manager")} icon={<UserCog className="h-4 w-4" />} />
-        <StatCard label="Admins" value={roleCount("admin")} icon={<UserCog className="h-4 w-4" />} />
+        <StatCard
+          label="Total users"
+          value={visibleUsers.length}
+          icon={<Users className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Employees"
+          value={roleCount("employee")}
+          icon={<UserCog className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Managers"
+          value={roleCount("manager")}
+          icon={<UserCog className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Admins"
+          value={roleCount("admin")}
+          icon={<UserCog className="h-4 w-4" />}
+        />
       </div>
 
       <SectionCard>
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input className="pl-9" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search users, departments, titles, or roles..." />
+          <Input
+            className="pl-9"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search users, departments, titles, or roles..."
+          />
         </div>
 
-        {isLoading && <div className="mb-3 rounded-md bg-muted/40 p-3 text-sm text-muted-foreground">Loading users...</div>}
+        {isLoading && (
+          <div className="mb-3 rounded-md bg-muted/40 p-3 text-sm text-muted-foreground">
+            Loading users...
+          </div>
+        )}
 
         <Table>
           <TableHeader>
@@ -148,10 +213,16 @@ function UsersPage() {
                   </div>
                 </TableCell>
                 <TableCell className="text-muted-foreground">{user.email ?? "-"}</TableCell>
-                <TableCell><Badge variant="outline">{user.department ?? "Unassigned"}</Badge></TableCell>
+                <TableCell>
+                  <Badge variant="outline">{user.department ?? "Unassigned"}</Badge>
+                </TableCell>
                 <TableCell className="text-muted-foreground">{user.job_title ?? "-"}</TableCell>
-                <TableCell><RoleBadge role={user.user_roles?.[0]?.role ?? "employee"} /></TableCell>
-                <TableCell><StatusBadge status={user.status ?? "active"} /></TableCell>
+                <TableCell>
+                  <RoleBadge role={user.user_roles?.[0]?.role ?? "employee"} />
+                </TableCell>
+                <TableCell>
+                  <StatusBadge status={user.status ?? "active"} />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -178,14 +249,18 @@ function UsersPage() {
                   <div className="mt-1 font-medium capitalize">{value}</div>
                 </div>
               ))}
-              <Button className="w-full" onClick={() => toast.success("Role review request created")}>
+              <Button
+                className="w-full"
+                onClick={() => toast.success("Role review request created")}
+              >
                 Request role review
               </Button>
               <div className="grid gap-2 sm:grid-cols-2">
                 <Button
                   variant="outline"
                   onClick={() => {
-                    const nextRole = selected.user_roles?.[0]?.role === "employee" ? "manager" : "employee";
+                    const nextRole =
+                      selected.user_roles?.[0]?.role === "employee" ? "manager" : "employee";
                     updateDemoUser(selected.id, { role: nextRole as "employee" | "manager" });
                     setRefreshKey((key) => key + 1);
                     setSelected({ ...selected, user_roles: [{ role: nextRole }] });
@@ -201,7 +276,9 @@ function UsersPage() {
                     updateDemoUser(selected.id, { status: nextStatus });
                     setRefreshKey((key) => key + 1);
                     setSelected({ ...selected, status: nextStatus });
-                    toast.success(nextStatus === "active" ? "User reactivated" : "User deactivated");
+                    toast.success(
+                      nextStatus === "active" ? "User reactivated" : "User deactivated",
+                    );
                   }}
                 >
                   {selected.status === "deactivated" ? "Reactivate" : "Deactivate"}
@@ -279,7 +356,9 @@ function InviteDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Invite user</DialogTitle>
-          <DialogDescription>Create a visible pending user record for HR review and onboarding.</DialogDescription>
+          <DialogDescription>
+            Create a visible pending user record for HR review and onboarding.
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-3">
           <div className="grid gap-1.5">
@@ -303,7 +382,9 @@ function InviteDialog({
           <div className="grid gap-1.5">
             <Label>Role</Label>
             <Select value={role} onValueChange={setRole}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="employee">Employee</SelectItem>
                 <SelectItem value="manager">Manager</SelectItem>
@@ -313,7 +394,9 @@ function InviteDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
           <Button onClick={submit}>Create invite</Button>
         </DialogFooter>
       </DialogContent>
@@ -332,6 +415,7 @@ function initials(name: string | null) {
 
 function RoleBadge({ role }: { role: string }) {
   if (role === "admin") return <Badge>Admin</Badge>;
-  if (role === "manager") return <Badge className="bg-info text-info-foreground hover:bg-info">Manager</Badge>;
+  if (role === "manager")
+    return <Badge className="bg-info text-info-foreground hover:bg-info">Manager</Badge>;
   return <Badge variant="secondary">Employee</Badge>;
 }

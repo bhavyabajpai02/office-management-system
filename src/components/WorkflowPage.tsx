@@ -34,7 +34,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -95,7 +101,13 @@ export function WorkflowPage({ kind }: { kind: WorkflowKind }) {
       />
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {meta.stats.map((stat) => (
-          <StatCard key={stat.label} label={stat.label} value={stat.value} hint={stat.hint} icon={stat.icon} />
+          <StatCard
+            key={stat.label}
+            label={stat.label}
+            value={stat.value}
+            hint={stat.hint}
+            icon={stat.icon}
+          />
         ))}
       </div>
       <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
@@ -105,7 +117,9 @@ export function WorkflowPage({ kind }: { kind: WorkflowKind }) {
               <div key={row.title} className="rounded-lg border bg-muted/25 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="font-medium">{row.title}</div>
-                  <Badge variant={row.badge === "At risk" ? "outline" : "secondary"}>{row.badge}</Badge>
+                  <Badge variant={row.badge === "At risk" ? "outline" : "secondary"}>
+                    {row.badge}
+                  </Badge>
                 </div>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{row.body}</p>
                 <Progress value={row.progress} className="mt-3 h-2" />
@@ -122,7 +136,9 @@ export function WorkflowPage({ kind }: { kind: WorkflowKind }) {
                 className="w-full rounded-lg border bg-card p-3 text-left text-sm transition hover:bg-muted/40"
               >
                 <div className="font-medium">{action}</div>
-                <div className="mt-1 text-muted-foreground">Action recorded in the workspace activity stream.</div>
+                <div className="mt-1 text-muted-foreground">
+                  Action recorded in the workspace activity stream.
+                </div>
               </button>
             ))}
           </div>
@@ -147,7 +163,10 @@ function CreateGoalPage() {
         }
       />
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <SectionCard title="Goal details" description="Required fields are validated before submission.">
+        <SectionCard
+          title="Goal details"
+          description="Required fields are validated before submission."
+        >
           <div className="grid gap-4">
             <div className="grid gap-1.5">
               <Label>Goal title</Label>
@@ -155,26 +174,47 @@ function CreateGoalPage() {
             </div>
             <div className="grid gap-1.5">
               <Label>Goal description</Label>
-              <Textarea rows={4} placeholder="Describe the business outcome, target audience, and success criteria." />
+              <Textarea
+                rows={4}
+                placeholder="Describe the business outcome, target audience, and success criteria."
+              />
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              <FieldSelect label="Goal category" values={["Customer Experience", "Operational Excellence", "Revenue Growth"]} />
+              <FieldSelect
+                label="Goal category"
+                values={["Customer Experience", "Operational Excellence", "Revenue Growth"]}
+              />
               <FieldSelect label="Priority level" values={["High", "Medium", "Low"]} />
-              <FieldSelect label="Visibility" values={["Private", "Manager visible", "Department shared"]} />
+              <FieldSelect
+                label="Visibility"
+                values={["Private", "Manager visible", "Department shared"]}
+              />
               <InputBlock label="Quarterly target" placeholder="100" />
               <InputBlock label="KPI / Metrics" placeholder="Cycle time, quality score, adoption" />
               <InputBlock label="Due date" type="date" />
-              <FieldSelect label="Team / department" values={["Engineering", "Customer Success", "People Ops"]} />
-              <FieldSelect label="Progress tracking" values={["Percentage", "Numeric KPI", "Milestone-based"]} />
+              <FieldSelect
+                label="Team / department"
+                values={["Engineering", "Customer Success", "People Ops"]}
+              />
+              <FieldSelect
+                label="Progress tracking"
+                values={["Percentage", "Numeric KPI", "Milestone-based"]}
+              />
               <InputBlock label="Tags / labels" placeholder="Q2, onboarding, customer" />
             </div>
             <div className="grid gap-4 md:grid-cols-2">
-              <InputBlock label="Dependencies" placeholder="Data team dashboard, manager approval" />
+              <InputBlock
+                label="Dependencies"
+                placeholder="Data team dashboard, manager approval"
+              />
               <InputBlock label="Attachments" placeholder="Placeholder for documents or links" />
             </div>
             <div className="grid gap-1.5">
               <Label>Milestones</Label>
-              <Textarea rows={4} placeholder="Q1 baseline, Q2 pilot, Q3 rollout, Q4 adoption review" />
+              <Textarea
+                rows={4}
+                placeholder="Q1 baseline, Q2 pilot, Q3 rollout, Q4 adoption review"
+              />
             </div>
             <div className="flex flex-col gap-2 border-t pt-4 sm:flex-row sm:justify-end">
               <Button variant="outline" onClick={() => toast.success("Goal draft saved")}>
@@ -215,16 +255,28 @@ function AnalyticsWorkflow({ role }: { role: "manager" | "admin" }) {
         description="Completion trends, delayed goals, KPI performance, check-in coverage, and AI insights."
         actions={
           <>
-            <Button variant="outline" onClick={() => toast.success("Timeframe updated")}>Q2 FY26</Button>
-            <Button onClick={() => toast.success("Analytics exported")}><Download className="mr-1.5 h-4 w-4" /> Export</Button>
+            <Button variant="outline" onClick={() => toast.success("Timeframe updated")}>
+              Q2 FY26
+            </Button>
+            <Button onClick={() => toast.success("Analytics exported")}>
+              <Download className="mr-1.5 h-4 w-4" /> Export
+            </Button>
           </>
         }
       />
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard label="Avg. performance" value="82%" icon={<BarChart3 className="h-4 w-4" />} />
-        <StatCard label="Check-in completion" value="91%" icon={<CheckCircle2 className="h-4 w-4" />} />
+        <StatCard
+          label="Check-in completion"
+          value="91%"
+          icon={<CheckCircle2 className="h-4 w-4" />}
+        />
         <StatCard label="Delayed goals" value="7" icon={<Target className="h-4 w-4" />} />
-        <StatCard label="Approval turnaround" value="1.8d" icon={<CalendarClock className="h-4 w-4" />} />
+        <StatCard
+          label="Approval turnaround"
+          value="1.8d"
+          icon={<CalendarClock className="h-4 w-4" />}
+        />
         <StatCard label="Engagement" value="88%" icon={<Users className="h-4 w-4" />} />
       </div>
       <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
@@ -235,7 +287,13 @@ function AnalyticsWorkflow({ role }: { role: "manager" | "admin" }) {
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                 <XAxis dataKey="name" fontSize={11} />
                 <YAxis domain={[0, 100]} fontSize={11} />
-                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", background: "var(--popover)" }} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: 8,
+                    border: "1px solid var(--border)",
+                    background: "var(--popover)",
+                  }}
+                />
                 <Line type="monotone" dataKey="progress" stroke="var(--accent)" strokeWidth={3} />
                 <Line type="monotone" dataKey="checkins" stroke="var(--success)" strokeWidth={2} />
                 <Line type="monotone" dataKey="approvals" stroke="var(--warning)" strokeWidth={2} />
@@ -250,7 +308,13 @@ function AnalyticsWorkflow({ role }: { role: "manager" | "admin" }) {
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                 <XAxis dataKey="name" fontSize={11} />
                 <YAxis domain={[0, 100]} fontSize={11} />
-                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", background: "var(--popover)" }} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: 8,
+                    border: "1px solid var(--border)",
+                    background: "var(--popover)",
+                  }}
+                />
                 <Bar dataKey="progress" fill="var(--accent)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -284,34 +348,68 @@ function ReportsPage({ role }: { role: "manager" | "admin" }) {
   const reports =
     role === "admin"
       ? [
-          ["Goal health report", `${snapshot.kpis.goals} active goals across ${snapshot.departmentData.length} departments`],
-          ["Check-in completion report", `${snapshot.kpis.checkInCoverage}% organization check-in coverage`],
-          ["Approval SLA report", `${snapshot.kpis.submitted} sheets still awaiting manager action`],
+          [
+            "Goal health report",
+            `${snapshot.kpis.goals} active goals across ${snapshot.departmentData.length} departments`,
+          ],
+          [
+            "Check-in completion report",
+            `${snapshot.kpis.checkInCoverage}% organization check-in coverage`,
+          ],
+          [
+            "Approval SLA report",
+            `${snapshot.kpis.submitted} sheets still awaiting manager action`,
+          ],
           ["Escalation report", `${snapshot.kpis.openEscalations} open HR escalations`],
           ["Employee engagement report", `${snapshot.kpis.employees} employees in active workflow`],
           ["Audit-ready activity report", `${snapshot.activity.length} workflow events available`],
         ]
       : [
-          ["Team goal health", `${snapshot.goals.length} employee goals in manager-visible workflow`],
-          ["Check-in coaching report", `${snapshot.kpis.checkInCoverage}% check-in coverage for active goals`],
+          [
+            "Team goal health",
+            `${snapshot.goals.length} employee goals in manager-visible workflow`,
+          ],
+          [
+            "Check-in coaching report",
+            `${snapshot.kpis.checkInCoverage}% check-in coverage for active goals`,
+          ],
           ["Approval queue report", `${snapshot.kpis.submitted} pending submitted goals`],
-          ["Shared goals report", `${snapshot.goals.filter((goal) => goal.is_shared).length} shared goals`],
-          ["At-risk employees", `${snapshot.escalations.filter((item) => item.status !== "resolved").length} active signals`],
-          ["Team activity export", `${snapshot.activity.filter((item) => item.role !== "admin").length} team events`],
+          [
+            "Shared goals report",
+            `${snapshot.goals.filter((goal) => goal.is_shared).length} shared goals`,
+          ],
+          [
+            "At-risk employees",
+            `${snapshot.escalations.filter((item) => item.status !== "resolved").length} active signals`,
+          ],
+          [
+            "Team activity export",
+            `${snapshot.activity.filter((item) => item.role !== "admin").length} team events`,
+          ],
         ];
   return (
     <div>
       <PageHeader
         title={role === "admin" ? "Team / Department Reports" : "Reports & Exports"}
         description="Generate CSV-ready reports for goals, check-ins, approvals, and audit activity."
-        actions={<Button onClick={() => toast.success("Report export prepared")}><Download className="mr-1.5 h-4 w-4" /> Export report</Button>}
+        actions={
+          <Button onClick={() => toast.success("Report export prepared")}>
+            <Download className="mr-1.5 h-4 w-4" /> Export report
+          </Button>
+        }
       />
       <div className="grid gap-4 md:grid-cols-3">
         {reports.map(([report, summary]) => (
-          <button key={report} onClick={() => toast.success(`${report} queued`)} className="rounded-lg border bg-card p-5 text-left transition hover:bg-muted/40">
+          <button
+            key={report}
+            onClick={() => toast.success(`${report} queued`)}
+            className="rounded-lg border bg-card p-5 text-left transition hover:bg-muted/40"
+          >
             <FileText className="mb-4 h-5 w-5 text-accent" />
             <div className="font-medium">{report}</div>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">{summary}. Includes filters, owner context, timestamps, and export metadata.</p>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              {summary}. Includes filters, owner context, timestamps, and export metadata.
+            </p>
           </button>
         ))}
       </div>
@@ -323,25 +421,53 @@ function GlobalSettingsPage() {
   const save = () => toast.success("Settings saved");
   return (
     <div>
-      <PageHeader title="Settings" description="Profile, theme, notifications, security, privacy, AI, email, and dashboard preferences." />
+      <PageHeader
+        title="Settings"
+        description="Profile, theme, notifications, security, privacy, AI, email, and dashboard preferences."
+      />
       <Tabs defaultValue="profile" className="space-y-4">
         <TabsList className="flex h-auto flex-wrap justify-start">
-          {["profile", "theme", "notifications", "security", "privacy", "dashboard", "ai", "email"].map((tab) => (
-            <TabsTrigger key={tab} value={tab} className="capitalize">{tab}</TabsTrigger>
+          {[
+            "profile",
+            "theme",
+            "notifications",
+            "security",
+            "privacy",
+            "dashboard",
+            "ai",
+            "email",
+          ].map((tab) => (
+            <TabsTrigger key={tab} value={tab} className="capitalize">
+              {tab}
+            </TabsTrigger>
           ))}
         </TabsList>
-        {["profile", "theme", "notifications", "security", "privacy", "dashboard", "ai", "email"].map((tab) => (
+        {[
+          "profile",
+          "theme",
+          "notifications",
+          "security",
+          "privacy",
+          "dashboard",
+          "ai",
+          "email",
+        ].map((tab) => (
           <TabsContent key={tab} value={tab}>
             <SectionCard title={`${tab[0].toUpperCase()}${tab.slice(1)} preferences`}>
               <div className="grid gap-4 md:grid-cols-2">
                 <InputBlock label="Display name" placeholder="Momentum user" />
-                <FieldSelect label="Default workspace" values={["Dashboard", "My Goals", "AI Copilot"]} />
+                <FieldSelect
+                  label="Default workspace"
+                  values={["Dashboard", "My Goals", "AI Copilot"]}
+                />
                 <ToggleRow label="Email updates" />
                 <ToggleRow label="Productivity nudges" />
                 <ToggleRow label="AI-assisted summaries" />
                 <ToggleRow label="Remember dashboard filters" />
               </div>
-              <Button className="mt-4" onClick={save}><Settings className="mr-1.5 h-4 w-4" /> Save settings</Button>
+              <Button className="mt-4" onClick={save}>
+                <Settings className="mr-1.5 h-4 w-4" /> Save settings
+              </Button>
             </SectionCard>
           </TabsContent>
         ))}
@@ -359,21 +485,56 @@ function CompliancePage() {
       <PageHeader
         title="Compliance Center"
         description="Policy review, compliance alerts, audit summaries, health cards, and organization risk indicators."
-        actions={<Button onClick={() => toast.success("Compliance evidence package prepared")}><Download className="mr-1.5 h-4 w-4" /> Export evidence</Button>}
+        actions={
+          <Button onClick={() => toast.success("Compliance evidence package prepared")}>
+            <Download className="mr-1.5 h-4 w-4" /> Export evidence
+          </Button>
+        }
       />
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Compliance health" value={`${Math.max(82, 96 - openEscalations * 4)}%`} icon={<ShieldCheck className="h-4 w-4" />} />
-        <StatCard label="Open risks" value={openEscalations} icon={<ShieldAlert className="h-4 w-4" />} />
-        <StatCard label="Audit coverage" value={`${auditCoverage}%`} icon={<FileText className="h-4 w-4" />} />
-        <StatCard label="Policy SLA" value={`${snapshot.settings.approvalSlaDays}d`} icon={<CalendarClock className="h-4 w-4" />} />
+        <StatCard
+          label="Compliance health"
+          value={`${Math.max(82, 96 - openEscalations * 4)}%`}
+          icon={<ShieldCheck className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Open risks"
+          value={openEscalations}
+          icon={<ShieldAlert className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Audit coverage"
+          value={`${auditCoverage}%`}
+          icon={<FileText className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Policy SLA"
+          value={`${snapshot.settings.approvalSlaDays}d`}
+          icon={<CalendarClock className="h-4 w-4" />}
+        />
       </div>
       <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
-        <SectionCard title="Policy review queue" description="Controls connected to workflow events and admin settings.">
+        <SectionCard
+          title="Policy review queue"
+          description="Controls connected to workflow events and admin settings."
+        >
           <div className="space-y-3">
             {[
-              ["Manager approval SLA", `${snapshot.settings.approvalSlaDays} business days`, snapshot.kpis.submitted ? "Review" : "Healthy"],
-              ["MFA for admins", snapshot.settings.mfaRequired ? "Required" : "Optional", snapshot.settings.mfaRequired ? "Healthy" : "Review"],
-              ["AI summaries", snapshot.settings.aiSummaries ? "Enabled for workflow summaries" : "Disabled", "Healthy"],
+              [
+                "Manager approval SLA",
+                `${snapshot.settings.approvalSlaDays} business days`,
+                snapshot.kpis.submitted ? "Review" : "Healthy",
+              ],
+              [
+                "MFA for admins",
+                snapshot.settings.mfaRequired ? "Required" : "Optional",
+                snapshot.settings.mfaRequired ? "Healthy" : "Review",
+              ],
+              [
+                "AI summaries",
+                snapshot.settings.aiSummaries ? "Enabled for workflow summaries" : "Disabled",
+                "Healthy",
+              ],
               ["Audit retention", "36 months configured in admin settings", "Healthy"],
             ].map(([title, body, status]) => (
               <div key={title} className="rounded-lg border bg-muted/25 p-4">
@@ -389,10 +550,16 @@ function CompliancePage() {
         <SectionCard title="Risk indicators">
           <div className="space-y-3">
             {snapshot.escalations.slice(0, 4).map((item) => (
-              <Link key={item.id} to="/admin/escalations" className="block rounded-lg border bg-card p-3 transition hover:bg-muted/40">
+              <Link
+                key={item.id}
+                to="/admin/escalations"
+                className="block rounded-lg border bg-card p-3 transition hover:bg-muted/40"
+              >
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-medium">{item.id}</span>
-                  <Badge variant={item.severity === "critical" ? "destructive" : "outline"}>{item.severity}</Badge>
+                  <Badge variant={item.severity === "critical" ? "destructive" : "outline"}>
+                    {item.severity}
+                  </Badge>
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">{item.summary}</p>
               </Link>
@@ -414,16 +581,24 @@ function SecurityPage() {
   };
   return (
     <div>
-      <PageHeader title="Security & Permissions" description="Manage roles, session policy, MFA posture, and permission review queues." />
+      <PageHeader
+        title="Security & Permissions"
+        description="Manage roles, session policy, MFA posture, and permission review queues."
+      />
       <div className="grid gap-4 xl:grid-cols-[1fr_360px]">
-        <SectionCard title="Permission matrix" description="Role permissions are editable and generate audit + notification events.">
+        <SectionCard
+          title="Permission matrix"
+          description="Role permissions are editable and generate audit + notification events."
+        >
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr className="border-b text-left">
                   <th className="py-2 pr-4 font-medium">Permission</th>
                   {permissions.map((role) => (
-                    <th key={role.role} className="py-2 px-3 font-medium capitalize">{role.role}</th>
+                    <th key={role.role} className="py-2 px-3 font-medium capitalize">
+                      {role.role}
+                    </th>
                   ))}
                 </tr>
               </thead>
@@ -456,7 +631,9 @@ function SecurityPage() {
               <div key={title as string} className="rounded-lg border bg-muted/25 p-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="font-medium">{title as string}</div>
-                  <Badge variant={healthy ? "secondary" : "outline"}>{healthy ? "Healthy" : "Watch"}</Badge>
+                  <Badge variant={healthy ? "secondary" : "outline"}>
+                    {healthy ? "Healthy" : "Watch"}
+                  </Badge>
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">{body as string}</p>
               </div>
@@ -471,22 +648,47 @@ function SecurityPage() {
 function ActivityTimelinePage({ role }: { role: "manager" | "admin" }) {
   const snapshot = getEnterpriseSnapshot();
   const events = snapshot.activity.filter((item) =>
-    role === "admin" ? true : item.role === "employee" || item.role === "manager" || item.role === "system",
+    role === "admin"
+      ? true
+      : item.role === "employee" || item.role === "manager" || item.role === "system",
   );
   return (
     <div>
       <PageHeader
         title={role === "admin" ? "Organization Activity" : "Activity Feed"}
-        description={role === "admin" ? "Organization-wide timeline across employee, manager, admin, and system events." : "Manager-visible approvals, check-ins, blockers, shared goals, and team workflow events."}
-        actions={<Button onClick={() => toast.success("Activity export prepared")}><Download className="mr-1.5 h-4 w-4" /> Export</Button>}
+        description={
+          role === "admin"
+            ? "Organization-wide timeline across employee, manager, admin, and system events."
+            : "Manager-visible approvals, check-ins, blockers, shared goals, and team workflow events."
+        }
+        actions={
+          <Button onClick={() => toast.success("Activity export prepared")}>
+            <Download className="mr-1.5 h-4 w-4" /> Export
+          </Button>
+        }
       />
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Events" value={events.length} icon={<Activity className="h-4 w-4" />} />
-        <StatCard label="Approvals" value={events.filter((item) => item.action.toLowerCase().includes("approved")).length} icon={<CheckCircle2 className="h-4 w-4" />} />
-        <StatCard label="Check-ins" value={events.filter((item) => item.entity === "check_in").length} icon={<CalendarClock className="h-4 w-4" />} />
-        <StatCard label="Escalations" value={snapshot.kpis.openEscalations} icon={<ShieldAlert className="h-4 w-4" />} />
+        <StatCard
+          label="Approvals"
+          value={events.filter((item) => item.action.toLowerCase().includes("approved")).length}
+          icon={<CheckCircle2 className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Check-ins"
+          value={events.filter((item) => item.entity === "check_in").length}
+          icon={<CalendarClock className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Escalations"
+          value={snapshot.kpis.openEscalations}
+          icon={<ShieldAlert className="h-4 w-4" />}
+        />
       </div>
-      <SectionCard title="Workflow timeline" description="Every action here is generated by the shared workflow engine.">
+      <SectionCard
+        title="Workflow timeline"
+        description="Every action here is generated by the shared workflow engine."
+      >
         <ol className="relative ml-2 space-y-4 border-l pl-6">
           {events.slice(0, 40).map((event) => (
             <li key={event.id} className="relative">
@@ -496,8 +698,12 @@ function ActivityTimelinePage({ role }: { role: "manager" | "admin" }) {
                 <Badge variant="outline">{event.role ?? "system"}</Badge>
                 {event.entity && <Badge variant="secondary">{event.entity}</Badge>}
               </div>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">{event.actor} - {event.detail}</p>
-              <div className="mt-1 text-xs text-muted-foreground">{new Date(event.created_at).toLocaleString()}</div>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                {event.actor} - {event.detail}
+              </p>
+              <div className="mt-1 text-xs text-muted-foreground">
+                {new Date(event.created_at).toLocaleString()}
+              </div>
             </li>
           ))}
         </ol>
@@ -511,14 +717,30 @@ function FieldSelect({ label, values }: { label: string; values: string[] }) {
     <div className="grid gap-1.5">
       <Label>{label}</Label>
       <Select defaultValue={values[0]}>
-        <SelectTrigger><SelectValue /></SelectTrigger>
-        <SelectContent>{values.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent>
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {values.map((value) => (
+            <SelectItem key={value} value={value}>
+              {value}
+            </SelectItem>
+          ))}
+        </SelectContent>
       </Select>
     </div>
   );
 }
 
-function InputBlock({ label, placeholder, type = "text" }: { label: string; placeholder?: string; type?: string }) {
+function InputBlock({
+  label,
+  placeholder,
+  type = "text",
+}: {
+  label: string;
+  placeholder?: string;
+  type?: string;
+}) {
   return (
     <div className="grid gap-1.5">
       <Label>{label}</Label>
@@ -536,18 +758,32 @@ function ToggleRow({ label }: { label: string }) {
   );
 }
 
-const simplePages: Record<Exclude<WorkflowKind, "employee-create-goal" | "settings" | "manager-analytics" | "manager-performance" | "manager-reports" | "admin-reports" | "admin-compliance" | "admin-security">, {
-  title: string;
-  description: string;
-  primaryTitle: string;
-  primaryDescription: string;
-  stats: Array<{ label: string; value: string | number; hint?: string; icon: React.ReactNode }>;
-  rows: Array<{ title: string; body: string; badge: string; progress: number }>;
-  actions: string[];
-}> = {
+const simplePages: Record<
+  Exclude<
+    WorkflowKind,
+    | "employee-create-goal"
+    | "settings"
+    | "manager-analytics"
+    | "manager-performance"
+    | "manager-reports"
+    | "admin-reports"
+    | "admin-compliance"
+    | "admin-security"
+  >,
+  {
+    title: string;
+    description: string;
+    primaryTitle: string;
+    primaryDescription: string;
+    stats: Array<{ label: string; value: string | number; hint?: string; icon: React.ReactNode }>;
+    rows: Array<{ title: string; body: string; badge: string; progress: number }>;
+    actions: string[];
+  }
+> = {
   "employee-goal-details": {
     title: "Goal Details",
-    description: "Review goal structure, KPI health, milestones, dependencies, and progress history.",
+    description:
+      "Review goal structure, KPI health, milestones, dependencies, and progress history.",
     primaryTitle: "Active goal detail",
     primaryDescription: "A realistic detail workspace for reviewing or preparing a goal update.",
     stats: [
@@ -557,14 +793,25 @@ const simplePages: Record<Exclude<WorkflowKind, "employee-create-goal" | "settin
       { label: "Due", value: "18d", icon: <CalendarClock className="h-4 w-4" /> },
     ],
     rows: [
-      { title: "KPI: response time improvement", body: "Actual is 76 against a quarterly target of 100.", badge: "On track", progress: 76 },
-      { title: "Milestone: automation pilot", body: "Pilot is ready for manager review and department rollout.", badge: "Ready", progress: 88 },
+      {
+        title: "KPI: response time improvement",
+        body: "Actual is 76 against a quarterly target of 100.",
+        badge: "On track",
+        progress: 76,
+      },
+      {
+        title: "Milestone: automation pilot",
+        body: "Pilot is ready for manager review and department rollout.",
+        badge: "Ready",
+        progress: 88,
+      },
     ],
     actions: ["Update progress", "Request manager feedback", "Open check-in form"],
   },
   "employee-activity": {
     title: "Activity History",
-    description: "Your goal edits, check-ins, notifications, AI actions, and approval events in one timeline.",
+    description:
+      "Your goal edits, check-ins, notifications, AI actions, and approval events in one timeline.",
     primaryTitle: "Recent activity",
     primaryDescription: "Demo-safe activity mirrors the enterprise audit model.",
     stats: [
@@ -574,8 +821,18 @@ const simplePages: Record<Exclude<WorkflowKind, "employee-create-goal" | "settin
       { label: "AI actions", value: 11, icon: <Sparkles className="h-4 w-4" /> },
     ],
     rows: [
-      { title: "Q2 check-in submitted", body: "Self-review captured achievements, blockers, and support needed.", badge: "Complete", progress: 100 },
-      { title: "Goal progress updated", body: "Response time goal moved from 64% to 76%.", badge: "Logged", progress: 76 },
+      {
+        title: "Q2 check-in submitted",
+        body: "Self-review captured achievements, blockers, and support needed.",
+        badge: "Complete",
+        progress: 100,
+      },
+      {
+        title: "Goal progress updated",
+        body: "Response time goal moved from 64% to 76%.",
+        badge: "Logged",
+        progress: 76,
+      },
     ],
     actions: ["Export activity", "Filter by check-ins", "Open audit view"],
   },
@@ -591,8 +848,18 @@ const simplePages: Record<Exclude<WorkflowKind, "employee-create-goal" | "settin
       { label: "Confidence", value: "High", icon: <Sparkles className="h-4 w-4" /> },
     ],
     rows: [
-      { title: "Momentum is improving", body: "Three goals have positive week-over-week movement.", badge: "Positive", progress: 82 },
-      { title: "One dependency needs attention", body: "Automation export format is blocking final rollout.", badge: "At risk", progress: 54 },
+      {
+        title: "Momentum is improving",
+        body: "Three goals have positive week-over-week movement.",
+        badge: "Positive",
+        progress: 82,
+      },
+      {
+        title: "One dependency needs attention",
+        body: "Automation export format is blocking final rollout.",
+        badge: "At risk",
+        progress: 54,
+      },
     ],
     actions: ["Ask Copilot for coaching", "Create recovery plan", "Share with manager"],
   },
@@ -608,14 +875,25 @@ const simplePages: Record<Exclude<WorkflowKind, "employee-create-goal" | "settin
       { label: "Overdue", value: 0, icon: <Activity className="h-4 w-4" /> },
     ],
     rows: [
-      { title: "Q2 self-review", body: "Complete achievements, blockers, support request, and rating.", badge: "Due soon", progress: 66 },
-      { title: "Automation milestone", body: "Manager review before department rollout.", badge: "Scheduled", progress: 80 },
+      {
+        title: "Q2 self-review",
+        body: "Complete achievements, blockers, support request, and rating.",
+        badge: "Due soon",
+        progress: 66,
+      },
+      {
+        title: "Automation milestone",
+        body: "Manager review before department rollout.",
+        badge: "Scheduled",
+        progress: 80,
+      },
     ],
     actions: ["Add reminder", "Open check-ins", "Export calendar"],
   },
   "manager-activity": {
     title: "Activity Feed",
-    description: "Manager-visible approvals, check-ins, blockers, shared goals, and team workflow events.",
+    description:
+      "Manager-visible approvals, check-ins, blockers, shared goals, and team workflow events.",
     primaryTitle: "Team activity",
     primaryDescription: "A consolidated operating feed for weekly manager review.",
     stats: [
@@ -625,14 +903,25 @@ const simplePages: Record<Exclude<WorkflowKind, "employee-create-goal" | "settin
       { label: "Reports", value: 4, icon: <FileText className="h-4 w-4" /> },
     ],
     rows: [
-      { title: "Alex submitted Q2 check-in", body: "Support requested for escalation category decision.", badge: "Needs review", progress: 78 },
-      { title: "Shared goal updated", body: "Customer retention goal moved to 84% team progress.", badge: "On track", progress: 84 },
+      {
+        title: "Alex submitted Q2 check-in",
+        body: "Support requested for escalation category decision.",
+        badge: "Needs review",
+        progress: 78,
+      },
+      {
+        title: "Shared goal updated",
+        body: "Customer retention goal moved to 84% team progress.",
+        badge: "On track",
+        progress: 84,
+      },
     ],
     actions: ["Send feedback", "Request update", "Export activity"],
   },
   "admin-activity": {
     title: "Organization Activity",
-    description: "Enterprise activity across goal edits, approvals, exports, escalations, and compliance events.",
+    description:
+      "Enterprise activity across goal edits, approvals, exports, escalations, and compliance events.",
     primaryTitle: "Organization timeline",
     primaryDescription: "HR-grade activity view with workflow context and export behavior.",
     stats: [
@@ -642,8 +931,18 @@ const simplePages: Record<Exclude<WorkflowKind, "employee-create-goal" | "settin
       { label: "Resolved", value: "96%", icon: <CheckCircle2 className="h-4 w-4" /> },
     ],
     rows: [
-      { title: "Bulk approval export", body: "Admin exported Q2 approval SLA report.", badge: "Logged", progress: 100 },
-      { title: "Escalation resolved", body: "People Ops closed a delayed check-in escalation.", badge: "Resolved", progress: 100 },
+      {
+        title: "Bulk approval export",
+        body: "Admin exported Q2 approval SLA report.",
+        badge: "Logged",
+        progress: 100,
+      },
+      {
+        title: "Escalation resolved",
+        body: "People Ops closed a delayed check-in escalation.",
+        badge: "Resolved",
+        progress: 100,
+      },
     ],
     actions: ["Export activity", "Open audit logs", "Review escalations"],
   },

@@ -11,10 +11,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
@@ -44,16 +70,34 @@ type SharedGoal = {
 };
 
 const UOM_OPTIONS = [
-  { value: "numeric",    label: "Numeric",    direction: "min" as const },
+  { value: "numeric", label: "Numeric", direction: "min" as const },
   { value: "percentage", label: "Percentage", direction: "min" as const },
-  { value: "timeline",   label: "Timeline",   direction: "timeline" as const },
+  { value: "timeline", label: "Timeline", direction: "timeline" as const },
   { value: "zero_based", label: "Zero-based", direction: "zero" as const },
 ];
 
 const fallbackEmployees = [
-  { id: "demo-employee", full_name: "Alex Morgan", email: "alex@momentum.ai", department: "Engineering", job_title: "Software Engineer" },
-  { id: "demo-employee-2", full_name: "Maya Patel", email: "maya@momentum.ai", department: "Customer Success", job_title: "Success Lead" },
-  { id: "demo-employee-3", full_name: "Jordan Kim", email: "jordan@momentum.ai", department: "Engineering", job_title: "QA Analyst" },
+  {
+    id: "demo-employee",
+    full_name: "Alex Morgan",
+    email: "alex@momentum.ai",
+    department: "Engineering",
+    job_title: "Software Engineer",
+  },
+  {
+    id: "demo-employee-2",
+    full_name: "Maya Patel",
+    email: "maya@momentum.ai",
+    department: "Customer Success",
+    job_title: "Success Lead",
+  },
+  {
+    id: "demo-employee-3",
+    full_name: "Jordan Kim",
+    email: "jordan@momentum.ai",
+    department: "Engineering",
+    job_title: "QA Analyst",
+  },
 ];
 
 function SharedGoalsPage() {
@@ -68,7 +112,9 @@ function SharedGoalsPage() {
     queryKey: ["shared-goals", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("shared_goals").select("*").order("created_at", { ascending: false });
+        .from("shared_goals")
+        .select("*")
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as SharedGoal[];
     },
@@ -80,7 +126,8 @@ function SharedGoalsPage() {
     queryKey: ["all-employees"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("profiles").select("id, full_name, email, department, job_title");
+        .from("profiles")
+        .select("id, full_name, email, department, job_title");
       if (error || !data || data.length === 0) return fallbackEmployees;
       return data;
     },
@@ -93,7 +140,10 @@ function SharedGoalsPage() {
         return;
       }
       // unlink child goals first
-      await supabase.from("goals").update({ shared_goal_id: null, is_shared: false }).eq("shared_goal_id", id);
+      await supabase
+        .from("goals")
+        .update({ shared_goal_id: null, is_shared: false })
+        .eq("shared_goal_id", id);
       const { error } = await supabase.from("shared_goals").delete().eq("id", id);
       if (error) throw error;
     },
@@ -125,7 +175,11 @@ function SharedGoalsPage() {
             icon={<Share2 className="h-8 w-8" />}
             title="No shared goals yet"
             description="Create a department-wide KPI to assign to your team."
-            action={<Button onClick={() => setOpen(true)}><Plus className="h-4 w-4 mr-1.5" /> New shared goal</Button>}
+            action={
+              <Button onClick={() => setOpen(true)}>
+                <Plus className="h-4 w-4 mr-1.5" /> New shared goal
+              </Button>
+            }
           />
         ) : (
           <Table>
@@ -148,17 +202,29 @@ function SharedGoalsPage() {
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
                         {sg.title}
-                        <Badge variant="secondary" className="text-[10px]"><Share2 className="h-3 w-3 mr-1" />Shared</Badge>
+                        <Badge variant="secondary" className="text-[10px]">
+                          <Share2 className="h-3 w-3 mr-1" />
+                          Shared
+                        </Badge>
                       </div>
-                      {sg.description && <div className="text-xs text-muted-foreground line-clamp-1">{sg.description}</div>}
+                      {sg.description && (
+                        <div className="text-xs text-muted-foreground line-clamp-1">
+                          {sg.description}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell className="text-muted-foreground">{sg.thrust_area}</TableCell>
                     <TableCell className="tabular-nums">{Number(sg.target)}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5 text-muted-foreground" />{sg.assigned_employee_ids.length}</div>
+                      <div className="flex items-center gap-1.5">
+                        <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                        {sg.assigned_employee_ids.length}
+                      </div>
                     </TableCell>
                     <TableCell className="text-sm">{owner?.full_name ?? "—"}</TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{sg.deadline ?? "—"}</TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {sg.deadline ?? "—"}
+                    </TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Button size="icon" variant="ghost" onClick={() => setToDelete(sg)}>
                         <Trash2 className="h-4 w-4 text-muted-foreground" />
@@ -199,8 +265,16 @@ function SharedGoalsPage() {
   );
 }
 
-function CreateSharedGoalDialog({ open, onOpenChange, managerId, employees, onDemoCreate }: {
-  open: boolean; onOpenChange: (b: boolean) => void; managerId: string;
+function CreateSharedGoalDialog({
+  open,
+  onOpenChange,
+  managerId,
+  employees,
+  onDemoCreate,
+}: {
+  open: boolean;
+  onOpenChange: (b: boolean) => void;
+  managerId: string;
   employees: Array<{ id: string; full_name: string; department: string | null }>;
   onDemoCreate: (goal: SharedGoal) => void;
 }) {
@@ -219,21 +293,26 @@ function CreateSharedGoalDialog({ open, onOpenChange, managerId, employees, onDe
 
   const departments = useMemo(
     () => Array.from(new Set(employees.map((e) => e.department).filter(Boolean))) as string[],
-    [employees]
+    [employees],
   );
 
   const filtered = useMemo(
-    () => department ? employees.filter((e) => e.department === department) : employees,
-    [department, employees]
+    () => (department ? employees.filter((e) => e.department === department) : employees),
+    [department, employees],
   );
 
   const toggle = (id: string) => {
-    setAssigned((cur) => cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]);
+    setAssigned((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
   };
 
   const reset = () => {
-    setTitle(""); setDescription(""); setTarget("100"); setWeight("15");
-    setDeadline(""); setAssigned([]); setPrimaryOwner("");
+    setTitle("");
+    setDescription("");
+    setTarget("100");
+    setWeight("15");
+    setDeadline("");
+    setAssigned([]);
+    setPrimaryOwner("");
   };
 
   const create = useMutation({
@@ -264,39 +343,57 @@ function CreateSharedGoalDialog({ open, onOpenChange, managerId, employees, onDe
       }
 
       // 1. Create shared goal
-      const { data: sg, error: e1 } = await supabase.from("shared_goals").insert({
-        manager_id: managerId,
-        department: department || null,
-        title, description, thrust_area: thrustArea,
-        uom_type: uom as "numeric" | "percentage" | "timeline" | "zero_based",
-        uom_direction: uomOpt.direction,
-        target: Number(target),
-        default_weightage: Number(weight),
-        deadline: deadline || null,
-        assigned_employee_ids: assigned,
-        primary_owner_id: primaryOwner,
-      }).select().single();
+      const { data: sg, error: e1 } = await supabase
+        .from("shared_goals")
+        .insert({
+          manager_id: managerId,
+          department: department || null,
+          title,
+          description,
+          thrust_area: thrustArea,
+          uom_type: uom as "numeric" | "percentage" | "timeline" | "zero_based",
+          uom_direction: uomOpt.direction,
+          target: Number(target),
+          default_weightage: Number(weight),
+          deadline: deadline || null,
+          assigned_employee_ids: assigned,
+          primary_owner_id: primaryOwner,
+        })
+        .select()
+        .single();
       if (e1) throw e1;
 
       // 2. Ensure each employee has a goal sheet and create linked goal
       for (const empId of assigned) {
-        let { data: sheet } = await supabase.from("goal_sheets")
-          .select("id").eq("employee_id", empId).eq("year", currentYear).maybeSingle();
+        let { data: sheet } = await supabase
+          .from("goal_sheets")
+          .select("id")
+          .eq("employee_id", empId)
+          .eq("year", currentYear)
+          .maybeSingle();
         if (!sheet) {
-          const { data: created } = await supabase.from("goal_sheets")
-            .insert({ employee_id: empId, year: currentYear }).select("id").single();
+          const { data: created } = await supabase
+            .from("goal_sheets")
+            .insert({ employee_id: empId, year: currentYear })
+            .select("id")
+            .single();
           sheet = created;
         }
         // Check for existing link
-        const { data: existing } = await supabase.from("goals")
-          .select("id").eq("shared_goal_id", sg.id).eq("employee_id", empId).maybeSingle();
+        const { data: existing } = await supabase
+          .from("goals")
+          .select("id")
+          .eq("shared_goal_id", sg.id)
+          .eq("employee_id", empId)
+          .maybeSingle();
         if (existing) continue;
 
         await supabase.from("goals").insert({
           sheet_id: sheet!.id,
           employee_id: empId,
           thrust_area: thrustArea,
-          title, description,
+          title,
+          description,
           uom_type: uom as "numeric" | "percentage" | "timeline" | "zero_based",
           uom_direction: uomOpt.direction,
           target: Number(target),
@@ -321,42 +418,78 @@ function CreateSharedGoalDialog({ open, onOpenChange, managerId, employees, onDe
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>New shared goal</DialogTitle>
-          <DialogDescription>Create a department KPI and assign it to multiple employees. Achievement entered by the primary owner syncs to all assigned goals.</DialogDescription>
+          <DialogDescription>
+            Create a department KPI and assign it to multiple employees. Achievement entered by the
+            primary owner syncs to all assigned goals.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-3">
           <div className="grid gap-1.5">
             <Label>Goal title</Label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Q3 customer NPS target" />
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Q3 customer NPS target"
+            />
           </div>
           <div className="grid gap-1.5">
             <Label>Description</Label>
-            <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
+            <Textarea
+              rows={2}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-1.5">
               <Label>Thrust area</Label>
               <Select value={thrustArea} onValueChange={setThrustArea}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{THRUST_AREAS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {THRUST_AREAS.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
             <div className="grid gap-1.5">
               <Label>Department filter</Label>
-              <Select value={department || "__all"} onValueChange={(v) => setDepartment(v === "__all" ? "" : v)}>
-                <SelectTrigger><SelectValue placeholder="All" /></SelectTrigger>
+              <Select
+                value={department || "__all"}
+                onValueChange={(v) => setDepartment(v === "__all" ? "" : v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__all">All departments</SelectItem>
-                  {departments.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                  {departments.map((d) => (
+                    <SelectItem key={d} value={d}>
+                      {d}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="grid gap-1.5">
               <Label>UoM</Label>
               <Select value={uom} onValueChange={setUom}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{UOM_OPTIONS.map((u) => <SelectItem key={u.value} value={u.value}>{u.label}</SelectItem>)}</SelectContent>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {UOM_OPTIONS.map((u) => (
+                    <SelectItem key={u.value} value={u.value}>
+                      {u.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
             <div className="grid gap-1.5">
@@ -365,8 +498,16 @@ function CreateSharedGoalDialog({ open, onOpenChange, managerId, employees, onDe
             </div>
             <div className="grid gap-1.5">
               <Label>Default weightage (%)</Label>
-              <Input type="number" min={10} max={100} value={weight} onChange={(e) => setWeight(e.target.value)} />
-              <p className="text-[11px] text-muted-foreground">Employees may adjust their own weightage.</p>
+              <Input
+                type="number"
+                min={10}
+                max={100}
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Employees may adjust their own weightage.
+              </p>
             </div>
             <div className="grid gap-1.5">
               <Label>Deadline</Label>
@@ -378,16 +519,26 @@ function CreateSharedGoalDialog({ open, onOpenChange, managerId, employees, onDe
             <Label>Assign employees ({assigned.length} selected)</Label>
             <div className="max-h-44 overflow-y-auto rounded-md border divide-y">
               {filtered.length === 0 ? (
-                <div className="p-3 text-sm text-muted-foreground">No employees match this department.</div>
-              ) : filtered.map((emp) => (
-                <label key={emp.id} className="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-muted/40">
-                  <Checkbox checked={assigned.includes(emp.id)} onCheckedChange={() => toggle(emp.id)} />
-                  <div className="flex-1 text-sm">
-                    <div>{emp.full_name}</div>
-                    <div className="text-xs text-muted-foreground">{emp.department ?? "—"}</div>
-                  </div>
-                </label>
-              ))}
+                <div className="p-3 text-sm text-muted-foreground">
+                  No employees match this department.
+                </div>
+              ) : (
+                filtered.map((emp) => (
+                  <label
+                    key={emp.id}
+                    className="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-muted/40"
+                  >
+                    <Checkbox
+                      checked={assigned.includes(emp.id)}
+                      onCheckedChange={() => toggle(emp.id)}
+                    />
+                    <div className="flex-1 text-sm">
+                      <div>{emp.full_name}</div>
+                      <div className="text-xs text-muted-foreground">{emp.department ?? "—"}</div>
+                    </div>
+                  </label>
+                ))
+              )}
             </div>
           </div>
 
@@ -395,11 +546,17 @@ function CreateSharedGoalDialog({ open, onOpenChange, managerId, employees, onDe
             <div className="grid gap-1.5">
               <Label>Primary owner (their actuals sync to peers)</Label>
               <Select value={primaryOwner} onValueChange={setPrimaryOwner}>
-                <SelectTrigger><SelectValue placeholder="Select primary owner" /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select primary owner" />
+                </SelectTrigger>
                 <SelectContent>
                   {assigned.map((id) => {
                     const emp = employees.find((e) => e.id === id);
-                    return <SelectItem key={id} value={id}>{emp?.full_name ?? id}</SelectItem>;
+                    return (
+                      <SelectItem key={id} value={id}>
+                        {emp?.full_name ?? id}
+                      </SelectItem>
+                    );
                   })}
                 </SelectContent>
               </Select>
@@ -408,7 +565,9 @@ function CreateSharedGoalDialog({ open, onOpenChange, managerId, employees, onDe
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
           <Button onClick={() => create.mutate()} disabled={!title || create.isPending}>
             {create.isPending ? "Creating..." : "Create & assign"}
           </Button>
@@ -418,7 +577,11 @@ function CreateSharedGoalDialog({ open, onOpenChange, managerId, employees, onDe
   );
 }
 
-function SharedGoalDrawer({ sharedGoal, onClose, employees }: {
+function SharedGoalDrawer({
+  sharedGoal,
+  onClose,
+  employees,
+}: {
   sharedGoal: SharedGoal | null;
   onClose: () => void;
   employees: Array<{ id: string; full_name: string; department: string | null }>;
@@ -427,7 +590,9 @@ function SharedGoalDrawer({ sharedGoal, onClose, employees }: {
     queryKey: ["linked-goals", sharedGoal?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("goals").select("*, check_ins(*)").eq("shared_goal_id", sharedGoal!.id);
+        .from("goals")
+        .select("*, check_ins(*)")
+        .eq("shared_goal_id", sharedGoal!.id);
       if (error) throw error;
       return data ?? [];
     },
@@ -444,7 +609,8 @@ function SharedGoalDrawer({ sharedGoal, onClose, employees }: {
             <Share2 className="h-4 w-4" /> {sharedGoal.title}
           </SheetTitle>
           <SheetDescription>
-            {sharedGoal.thrust_area} · Target {Number(sharedGoal.target)} · Default weight {Number(sharedGoal.default_weightage)}%
+            {sharedGoal.thrust_area} · Target {Number(sharedGoal.target)} · Default weight{" "}
+            {Number(sharedGoal.default_weightage)}%
           </SheetDescription>
         </SheetHeader>
 
@@ -459,7 +625,9 @@ function SharedGoalDrawer({ sharedGoal, onClose, employees }: {
           </div>
           <div>
             <div className="text-xs text-muted-foreground">Primary owner</div>
-            <div>{employees.find((e) => e.id === sharedGoal.primary_owner_id)?.full_name ?? "—"}</div>
+            <div>
+              {employees.find((e) => e.id === sharedGoal.primary_owner_id)?.full_name ?? "—"}
+            </div>
           </div>
           <div>
             <div className="text-xs text-muted-foreground">Assigned</div>
@@ -474,7 +642,9 @@ function SharedGoalDrawer({ sharedGoal, onClose, employees }: {
         <div className="mt-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-sm">Linked employees</h3>
-            <Badge variant="outline" className="gap-1"><Link2 className="h-3 w-3" /> Sync from primary owner</Badge>
+            <Badge variant="outline" className="gap-1">
+              <Link2 className="h-3 w-3" /> Sync from primary owner
+            </Badge>
           </div>
           {isLoading ? (
             <TableSkeleton rows={3} />
@@ -492,7 +662,10 @@ function SharedGoalDrawer({ sharedGoal, onClose, employees }: {
                 {linkedGoals.map((g: any) => {
                   const emp = employees.find((e) => e.id === g.employee_id);
                   const isPrimary = g.employee_id === sharedGoal.primary_owner_id;
-                  const totalActual = (g.check_ins ?? []).reduce((s: number, c: any) => s + (Number(c.actual) || 0), 0);
+                  const totalActual = (g.check_ins ?? []).reduce(
+                    (s: number, c: any) => s + (Number(c.actual) || 0),
+                    0,
+                  );
                   const pct = calcProgress({
                     direction: g.uom_direction,
                     target: Number(g.target),
@@ -511,8 +684,15 @@ function SharedGoalDrawer({ sharedGoal, onClose, employees }: {
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         {g.last_synced_at ? (
-                          <span className="inline-flex items-center gap-1"><RefreshCw className="h-3 w-3" />{new Date(g.last_synced_at).toLocaleDateString()}</span>
-                        ) : isPrimary ? "Source" : "—"}
+                          <span className="inline-flex items-center gap-1">
+                            <RefreshCw className="h-3 w-3" />
+                            {new Date(g.last_synced_at).toLocaleDateString()}
+                          </span>
+                        ) : isPrimary ? (
+                          "Source"
+                        ) : (
+                          "—"
+                        )}
                       </TableCell>
                     </TableRow>
                   );

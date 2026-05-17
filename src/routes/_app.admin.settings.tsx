@@ -25,7 +25,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,14 +57,18 @@ function SettingsPage() {
   const [orgName, setOrgName] = useState(demoSettings.orgName);
   const [cycle, setCycle] = useState(demoSettings.cycle);
   const [timezone, setTimezone] = useState(demoSettings.timezone);
-  const [policyNotes, setPolicyNotes] = useState("Managers must review submitted goal sheets within two business days.");
+  const [policyNotes, setPolicyNotes] = useState(
+    "Managers must review submitted goal sheets within two business days.",
+  );
 
   const [weeklyDigest, setWeeklyDigest] = useState(demoSettings.weeklyDigest);
   const [approvalAlerts, setApprovalAlerts] = useState(true);
   const [riskAlerts, setRiskAlerts] = useState(true);
   const [auditAlerts, setAuditAlerts] = useState(false);
 
-  const [theme, setTheme] = useState<ThemePreference>(() => (localStorage.getItem("momentum-theme") as ThemePreference) || "system");
+  const [theme, setTheme] = useState<ThemePreference>(
+    () => (localStorage.getItem("momentum-theme") as ThemePreference) || "system",
+  );
   const [mfaRequired, setMfaRequired] = useState(demoSettings.mfaRequired);
   const [sessionTimeout, setSessionTimeout] = useState("8");
   const [password, setPassword] = useState("");
@@ -163,24 +173,43 @@ function SettingsPage() {
 
         <TabsContent value="profile" className="space-y-4">
           <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-            <SectionCard title="Profile settings" description="Keep your admin identity current for audit logs and approvals.">
+            <SectionCard
+              title="Profile settings"
+              description="Keep your admin identity current for audit logs and approvals."
+            >
               <div className="grid gap-4">
                 <div className="grid gap-1.5">
                   <Label htmlFor="full-name">Full name</Label>
-                  <Input id="full-name" value={fullName} onChange={(event) => setFullName(event.target.value)} />
+                  <Input
+                    id="full-name"
+                    value={fullName}
+                    onChange={(event) => setFullName(event.target.value)}
+                  />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="grid gap-1.5">
                     <Label htmlFor="job-title">Job title</Label>
-                    <Input id="job-title" value={jobTitle} onChange={(event) => setJobTitle(event.target.value)} />
+                    <Input
+                      id="job-title"
+                      value={jobTitle}
+                      onChange={(event) => setJobTitle(event.target.value)}
+                    />
                   </div>
                   <div className="grid gap-1.5">
                     <Label htmlFor="department">Department</Label>
-                    <Input id="department" value={department} onChange={(event) => setDepartment(event.target.value)} />
+                    <Input
+                      id="department"
+                      value={department}
+                      onChange={(event) => setDepartment(event.target.value)}
+                    />
                   </div>
                 </div>
                 <Button className="w-fit" onClick={saveProfile} disabled={saving === "profile"}>
-                  {saving === "profile" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Save className="mr-1.5 h-4 w-4" />}
+                  {saving === "profile" ? (
+                    <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-1.5 h-4 w-4" />
+                  )}
                   Save profile
                 </Button>
               </div>
@@ -206,20 +235,33 @@ function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="organization" className="space-y-4">
-          <SectionCard title="Organization settings" description="Demo-ready policy controls used across workflow messaging.">
+          <SectionCard
+            title="Organization settings"
+            description="Demo-ready policy controls used across workflow messaging."
+          >
             <div className="grid gap-4 lg:grid-cols-3">
               <div className="grid gap-1.5">
                 <Label htmlFor="org-name">Organization name</Label>
-                <Input id="org-name" value={orgName} onChange={(event) => setOrgName(event.target.value)} />
+                <Input
+                  id="org-name"
+                  value={orgName}
+                  onChange={(event) => setOrgName(event.target.value)}
+                />
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor="cycle">Active cycle</Label>
-                <Input id="cycle" value={cycle} onChange={(event) => setCycle(event.target.value)} />
+                <Input
+                  id="cycle"
+                  value={cycle}
+                  onChange={(event) => setCycle(event.target.value)}
+                />
               </div>
               <div className="grid gap-1.5">
                 <Label>Timezone</Label>
                 <Select value={timezone} onValueChange={setTimezone}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Asia/Calcutta">Asia/Calcutta</SelectItem>
                     <SelectItem value="America/New_York">America/New_York</SelectItem>
@@ -230,19 +272,40 @@ function SettingsPage() {
               </div>
               <div className="grid gap-1.5 lg:col-span-3">
                 <Label htmlFor="policy">Approval policy note</Label>
-                <Textarea id="policy" rows={4} value={policyNotes} onChange={(event) => setPolicyNotes(event.target.value)} />
+                <Textarea
+                  id="policy"
+                  rows={4}
+                  value={policyNotes}
+                  onChange={(event) => setPolicyNotes(event.target.value)}
+                />
               </div>
             </div>
-            <Button className="mt-4" onClick={() => runSave("org", () => {
-              localStorage.setItem("momentum-org-settings", JSON.stringify({ orgName, cycle, timezone, policyNotes }));
-              updateDemoOrgSettings({ orgName, cycle, timezone });
-            })} disabled={saving === "org"}>
-              {saving === "org" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Building2 className="mr-1.5 h-4 w-4" />}
+            <Button
+              className="mt-4"
+              onClick={() =>
+                runSave("org", () => {
+                  localStorage.setItem(
+                    "momentum-org-settings",
+                    JSON.stringify({ orgName, cycle, timezone, policyNotes }),
+                  );
+                  updateDemoOrgSettings({ orgName, cycle, timezone });
+                })
+              }
+              disabled={saving === "org"}
+            >
+              {saving === "org" ? (
+                <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+              ) : (
+                <Building2 className="mr-1.5 h-4 w-4" />
+              )}
               Save organization
             </Button>
           </SectionCard>
 
-          <SectionCard title="Theme preferences" description="Switch the presentation between light, dark, or system mode.">
+          <SectionCard
+            title="Theme preferences"
+            description="Switch the presentation between light, dark, or system mode."
+          >
             <div className="grid gap-3 sm:grid-cols-3">
               {[
                 ["system", Laptop, "System"],
@@ -265,18 +328,58 @@ function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-4">
-          <SectionCard title="Notification preferences" description="Control which workflow events create admin alerts.">
+          <SectionCard
+            title="Notification preferences"
+            description="Control which workflow events create admin alerts."
+          >
             <div className="grid gap-3 md:grid-cols-2">
-              <SettingToggle icon={<Bell className="h-4 w-4" />} label="Weekly executive digest" description="Summarize adoption, delayed goals, and approvals every Monday." checked={weeklyDigest} onCheckedChange={setWeeklyDigest} />
-              <SettingToggle icon={<ClipboardIcon />} label="Approval SLA alerts" description="Notify admins when manager reviews exceed policy." checked={approvalAlerts} onCheckedChange={setApprovalAlerts} />
-              <SettingToggle icon={<Clock className="h-4 w-4" />} label="Risk and overdue alerts" description="Highlight delayed goals and missed check-ins." checked={riskAlerts} onCheckedChange={setRiskAlerts} />
-              <SettingToggle icon={<Eye className="h-4 w-4" />} label="Audit anomaly alerts" description="Surface sensitive workflow changes for HR review." checked={auditAlerts} onCheckedChange={setAuditAlerts} />
+              <SettingToggle
+                icon={<Bell className="h-4 w-4" />}
+                label="Weekly executive digest"
+                description="Summarize adoption, delayed goals, and approvals every Monday."
+                checked={weeklyDigest}
+                onCheckedChange={setWeeklyDigest}
+              />
+              <SettingToggle
+                icon={<ClipboardIcon />}
+                label="Approval SLA alerts"
+                description="Notify admins when manager reviews exceed policy."
+                checked={approvalAlerts}
+                onCheckedChange={setApprovalAlerts}
+              />
+              <SettingToggle
+                icon={<Clock className="h-4 w-4" />}
+                label="Risk and overdue alerts"
+                description="Highlight delayed goals and missed check-ins."
+                checked={riskAlerts}
+                onCheckedChange={setRiskAlerts}
+              />
+              <SettingToggle
+                icon={<Eye className="h-4 w-4" />}
+                label="Audit anomaly alerts"
+                description="Surface sensitive workflow changes for HR review."
+                checked={auditAlerts}
+                onCheckedChange={setAuditAlerts}
+              />
             </div>
-            <Button className="mt-4" onClick={() => runSave("notifications", () => {
-              localStorage.setItem("momentum-notifications", JSON.stringify({ weeklyDigest, approvalAlerts, riskAlerts, auditAlerts }));
-              updateDemoOrgSettings({ weeklyDigest });
-            })} disabled={saving === "notifications"}>
-              {saving === "notifications" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Bell className="mr-1.5 h-4 w-4" />}
+            <Button
+              className="mt-4"
+              onClick={() =>
+                runSave("notifications", () => {
+                  localStorage.setItem(
+                    "momentum-notifications",
+                    JSON.stringify({ weeklyDigest, approvalAlerts, riskAlerts, auditAlerts }),
+                  );
+                  updateDemoOrgSettings({ weeklyDigest });
+                })
+              }
+              disabled={saving === "notifications"}
+            >
+              {saving === "notifications" ? (
+                <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+              ) : (
+                <Bell className="mr-1.5 h-4 w-4" />
+              )}
               Save preferences
             </Button>
           </SectionCard>
@@ -284,13 +387,24 @@ function SettingsPage() {
 
         <TabsContent value="security" className="space-y-4">
           <div className="grid gap-4 lg:grid-cols-2">
-            <SectionCard title="Security settings" description="Configure authentication expectations for the organization.">
+            <SectionCard
+              title="Security settings"
+              description="Configure authentication expectations for the organization."
+            >
               <div className="space-y-4">
-                <SettingToggle icon={<ShieldCheck className="h-4 w-4" />} label="Require MFA for admins" description="Recommended for production HR and audit access." checked={mfaRequired} onCheckedChange={setMfaRequired} />
+                <SettingToggle
+                  icon={<ShieldCheck className="h-4 w-4" />}
+                  label="Require MFA for admins"
+                  description="Recommended for production HR and audit access."
+                  checked={mfaRequired}
+                  onCheckedChange={setMfaRequired}
+                />
                 <div className="grid gap-1.5">
                   <Label>Session timeout</Label>
                   <Select value={sessionTimeout} onValueChange={setSessionTimeout}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="4">4 hours</SelectItem>
                       <SelectItem value="8">8 hours</SelectItem>
@@ -299,11 +413,23 @@ function SettingsPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={() => runSave("security", () => {
-                  localStorage.setItem("momentum-security", JSON.stringify({ mfaRequired, sessionTimeout }));
-                  updateDemoOrgSettings({ mfaRequired });
-                })} disabled={saving === "security"}>
-                  {saving === "security" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <LockKeyhole className="mr-1.5 h-4 w-4" />}
+                <Button
+                  onClick={() =>
+                    runSave("security", () => {
+                      localStorage.setItem(
+                        "momentum-security",
+                        JSON.stringify({ mfaRequired, sessionTimeout }),
+                      );
+                      updateDemoOrgSettings({ mfaRequired });
+                    })
+                  }
+                  disabled={saving === "security"}
+                >
+                  {saving === "security" ? (
+                    <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                  ) : (
+                    <LockKeyhole className="mr-1.5 h-4 w-4" />
+                  )}
                   Save security
                 </Button>
               </div>
@@ -313,14 +439,28 @@ function SettingsPage() {
               <div className="grid gap-3">
                 <div className="grid gap-1.5">
                   <Label htmlFor="new-password">New password</Label>
-                  <Input id="new-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+                  <Input
+                    id="new-password"
+                    type="password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                  />
                 </div>
                 <div className="grid gap-1.5">
                   <Label htmlFor="confirm-password">Confirm password</Label>
-                  <Input id="confirm-password" type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} />
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                  />
                 </div>
                 <Button onClick={updatePassword} disabled={saving === "password"}>
-                  {saving === "password" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <KeyRound className="mr-1.5 h-4 w-4" />}
+                  {saving === "password" ? (
+                    <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                  ) : (
+                    <KeyRound className="mr-1.5 h-4 w-4" />
+                  )}
                   Update password
                 </Button>
               </div>
@@ -330,12 +470,17 @@ function SettingsPage() {
 
         <TabsContent value="audit" className="space-y-4">
           <div className="grid gap-4 lg:grid-cols-2">
-            <SectionCard title="Audit preferences" description="Control retention and export defaults.">
+            <SectionCard
+              title="Audit preferences"
+              description="Control retention and export defaults."
+            >
               <div className="grid gap-4">
                 <div className="grid gap-1.5">
                   <Label>Audit retention</Label>
                   <Select value={auditRetention} onValueChange={setAuditRetention}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="12">12 months</SelectItem>
                       <SelectItem value="24">24 months</SelectItem>
@@ -344,19 +489,35 @@ function SettingsPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={() => runSave("audit", () => localStorage.setItem("momentum-audit", JSON.stringify({ auditRetention })))} disabled={saving === "audit"}>
-                  {saving === "audit" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Settings className="mr-1.5 h-4 w-4" />}
+                <Button
+                  onClick={() =>
+                    runSave("audit", () =>
+                      localStorage.setItem("momentum-audit", JSON.stringify({ auditRetention })),
+                    )
+                  }
+                  disabled={saving === "audit"}
+                >
+                  {saving === "audit" ? (
+                    <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Settings className="mr-1.5 h-4 w-4" />
+                  )}
                   Save audit policy
                 </Button>
               </div>
             </SectionCard>
 
-            <SectionCard title="Data export options" description="Download the current configuration snapshot.">
+            <SectionCard
+              title="Data export options"
+              description="Download the current configuration snapshot."
+            >
               <div className="grid gap-3">
                 <div className="grid gap-1.5">
                   <Label>Export format</Label>
                   <Select value={exportFormat} onValueChange={setExportFormat}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="json">JSON</SelectItem>
                       <SelectItem value="csv">CSV</SelectItem>
@@ -372,11 +533,22 @@ function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="sessions" className="space-y-4">
-          <SectionCard title="Session management" description="Review current session posture and sign out when needed.">
+          <SectionCard
+            title="Session management"
+            description="Review current session posture and sign out when needed."
+          >
             <div className="grid gap-3 md:grid-cols-3">
-              <StatusTile icon={<Database className="h-4 w-4" />} label="Session provider" value="Supabase Auth" />
+              <StatusTile
+                icon={<Database className="h-4 w-4" />}
+                label="Session provider"
+                value="Supabase Auth"
+              />
               <StatusTile icon={<Palette className="h-4 w-4" />} label="Theme mode" value={theme} />
-              <StatusTile icon={<Clock className="h-4 w-4" />} label="Timeout" value={`${sessionTimeout} hours`} />
+              <StatusTile
+                icon={<Clock className="h-4 w-4" />}
+                label="Timeout"
+                value={`${sessionTimeout} hours`}
+              />
             </div>
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <Button variant="outline" onClick={() => toast.success("Current session refreshed")}>
@@ -409,7 +581,9 @@ function SettingToggle({
   return (
     <div className="flex items-start justify-between gap-4 rounded-lg border bg-card p-4">
       <div className="flex gap-3">
-        <div className="grid h-9 w-9 place-items-center rounded-md bg-muted text-muted-foreground">{icon}</div>
+        <div className="grid h-9 w-9 place-items-center rounded-md bg-muted text-muted-foreground">
+          {icon}
+        </div>
         <div>
           <div className="font-medium">{label}</div>
           <p className="mt-1 text-sm leading-5 text-muted-foreground">{description}</p>
@@ -420,7 +594,15 @@ function SettingToggle({
   );
 }
 
-function StatusTile({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function StatusTile({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
   return (
     <div className="rounded-lg border bg-muted/25 p-4">
       <div className="mb-3 text-accent">{icon}</div>

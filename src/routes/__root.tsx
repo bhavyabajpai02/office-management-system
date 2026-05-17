@@ -20,8 +20,7 @@ function NotFoundComponent() {
         <h1 className="text-6xl font-semibold tracking-tight">404</h1>
         <h2 className="mt-4 text-xl font-semibold">Page not found</h2>
         <p className="mt-2 text-sm leading-6 text-slate-300">
-          Momentum AI could not find that workspace. Return home or open your
-          role dashboard.
+          Momentum AI could not find that workspace. Return home or open your role dashboard.
         </p>
         <Link
           to="/"

@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import {
   BarChart3,
   Bell,
@@ -36,11 +37,14 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth, type AppRole } from "@/lib/auth-context";
+import { getDemoPermissions } from "@/lib/demo-workflows";
+import { Logo } from "@/components/Logo";
 
 type NavItem = {
   title: string;
   url: string;
   icon: React.ComponentType<{ className?: string }>;
+  requiredPermission?: string;
 };
 
 const sharedAccountItems: NavItem[] = [
@@ -56,16 +60,19 @@ const navByRole: Record<AppRole, { label: string; items: NavItem[] }[]> = {
       items: [
         { title: "Dashboard", url: "/employee", icon: LayoutDashboard },
         { title: "My Goals", url: "/employee/goals", icon: Target },
-        { title: "Create Goal", url: "/employee/create-goal", icon: ClipboardCheck },
-        { title: "Goal Details", url: "/employee/goal-details", icon: FileText },
+        {
+          title: "Create Goal",
+          url: "/employee/create-goal",
+          icon: ClipboardCheck,
+          requiredPermission: "create_goals",
+        },
         {
           title: "Quarterly Check-Ins",
           url: "/employee/checkins",
           icon: CheckSquare,
+          requiredPermission: "submit_checkins",
         },
         { title: "Activity History", url: "/employee/activity", icon: Activity },
-        { title: "Performance Insights", url: "/employee/insights", icon: LineChart },
-        { title: "Calendar / Deadlines", url: "/employee/calendar", icon: CalendarClock },
       ],
     },
     { label: "Account", items: sharedAccountItems },
@@ -78,11 +85,14 @@ const navByRole: Record<AppRole, { label: string; items: NavItem[] }[]> = {
         { title: "Team Overview", url: "/manager", icon: Users },
         { title: "Team Analytics", url: "/manager/analytics", icon: BarChart3 },
         { title: "Team Check-Ins", url: "/manager/team", icon: Users },
-        { title: "Team Performance", url: "/manager/performance", icon: LineChart },
         { title: "Shared Goals", url: "/manager/shared", icon: Share2 },
-        { title: "Goal Approvals", url: "/manager/approvals", icon: ClipboardCheck },
+        {
+          title: "Goal Approvals",
+          url: "/manager/approvals",
+          icon: ClipboardCheck,
+          requiredPermission: "approve_goals",
+        },
         { title: "Activity Feed", url: "/manager/activity", icon: Activity },
-        { title: "Reports / Exports", url: "/manager/reports", icon: FileText },
       ],
     },
     { label: "Account", items: sharedAccountItems },
@@ -92,15 +102,33 @@ const navByRole: Record<AppRole, { label: string; items: NavItem[] }[]> = {
       label: "Organization",
       items: [
         { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
-        { title: "User Management", url: "/admin/users", icon: Users },
-        { title: "Audit Logs", url: "/admin/audit", icon: FileSearch },
+        {
+          title: "User Management",
+          url: "/admin/users",
+          icon: Users,
+          requiredPermission: "manage_users",
+        },
+        {
+          title: "Audit Logs",
+          url: "/admin/audit",
+          icon: FileSearch,
+          requiredPermission: "view_audit",
+        },
         { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
         { title: "Escalations", url: "/admin/escalations", icon: ShieldAlert },
-        { title: "Department Reports", url: "/admin/reports", icon: FileText },
-        { title: "Compliance Center", url: "/admin/compliance", icon: ShieldCheck },
         { title: "Organization Activity", url: "/admin/activity", icon: Activity },
-        { title: "Platform Settings", url: "/admin/settings", icon: Settings },
-        { title: "Security & Permissions", url: "/admin/security", icon: ShieldCheck },
+        {
+          title: "Platform Settings",
+          url: "/admin/settings",
+          icon: Settings,
+          requiredPermission: "configure_platform",
+        },
+        {
+          title: "Security & Permissions",
+          url: "/admin/security",
+          icon: ShieldCheck,
+          requiredPermission: "configure_platform",
+        },
       ],
     },
     { label: "Account", items: sharedAccountItems },
@@ -112,7 +140,24 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const { profile, role, signOut } = useAuth();
   const pathname = useRouterState({ select: (r) => r.location.pathname });
-  const sections = role ? navByRole[role] : [];
+
+  const { data: allPermissions = [] } = useQuery({
+    queryKey: ["demo-permissions"],
+    queryFn: async () => getDemoPermissions(),
+  });
+
+  const userPermissions = allPermissions.find((p) => p.role === role)?.permissions ?? {};
+
+  const sections = role
+    ? navByRole[role]
+        .map((section) => ({
+          ...section,
+          items: section.items.filter(
+            (item) => !item.requiredPermission || userPermissions[item.requiredPermission],
+          ),
+        }))
+        .filter((section) => section.items.length > 0)
+    : [];
 
   const initials = (profile?.full_name ?? "U")
     .split(" ")
@@ -124,19 +169,18 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border/70">
       <SidebarHeader className="border-b border-sidebar-border/60">
-        <div className="flex items-center gap-2 px-2 py-2">
-          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white text-slate-950 shadow-sm">
-            <PanelsTopLeft className="h-5 w-5" />
-          </div>
-          {!collapsed && (
-            <div className="min-w-0">
-              <div className="truncate text-sm font-semibold">Momentum AI</div>
-              <div className="truncate text-[11px] capitalize text-sidebar-foreground/60">
+        <Link to="/" className="flex items-center gap-2 px-2 py-2 hover:opacity-80 transition-opacity outline-none">
+          {collapsed ? (
+            <Logo variant="icon" className="text-accent" />
+          ) : (
+            <div className="flex flex-col">
+              <Logo />
+              <div className="text-[11px] font-medium tracking-wide capitalize text-sidebar-foreground/50 mt-1 pl-1">
                 {role ?? "workspace"} portal
               </div>
             </div>
           )}
-        </div>
+        </Link>
       </SidebarHeader>
 
       <SidebarContent className="px-1 py-2">
@@ -169,9 +213,7 @@ export function AppSidebar() {
       <SidebarFooter className="border-t border-sidebar-border/60">
         <div className="flex items-center gap-2 p-2">
           <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-white text-xs text-slate-950">
-              {initials}
-            </AvatarFallback>
+            <AvatarFallback className="bg-white text-xs text-slate-950">{initials}</AvatarFallback>
           </Avatar>
           {!collapsed && (
             <div className="min-w-0 flex-1">

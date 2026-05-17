@@ -17,13 +17,29 @@ import {
   YAxis,
 } from "recharts";
 import { toast } from "sonner";
-import { Activity, AlertTriangle, BarChart3, CheckCircle2, Clock, FileDown, Target, Users } from "lucide-react";
+import {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  CheckCircle2,
+  Clock,
+  FileDown,
+  Target,
+  Users,
+} from "lucide-react";
 import { PageHeader, SectionCard } from "@/components/PageHeader";
 import { StatCard } from "@/components/StatCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { getEnterpriseSnapshot } from "@/lib/demo-workflows";
 
@@ -37,11 +53,22 @@ type AnalyticsData = {
   completion: number;
   approvalSla: number;
   delayedGoals: number;
-  departmentData: Array<{ department: string; employees: number; progress: number; approvals: number }>;
+  departmentData: Array<{
+    department: string;
+    employees: number;
+    progress: number;
+    approvals: number;
+  }>;
   trendData: Array<{ week: string; completed: number; submitted: number; audit: number }>;
   statusData: Array<{ name: string; value: number; color: string }>;
   heatmap: Array<{ team: string; q1: number; q2: number; q3: number; q4: number }>;
-  topEmployees: Array<{ name: string; department: string; progress: number; goals: number; signal: string }>;
+  topEmployees: Array<{
+    name: string;
+    department: string;
+    progress: number;
+    goals: number;
+    signal: string;
+  }>;
 };
 
 const fallback: AnalyticsData = {
@@ -79,7 +106,13 @@ const fallback: AnalyticsData = {
   ],
   topEmployees: [
     { name: "Avery Chen", department: "Engineering", progress: 96, goals: 7, signal: "Ahead" },
-    { name: "Maya Patel", department: "Customer Success", progress: 92, goals: 6, signal: "On track" },
+    {
+      name: "Maya Patel",
+      department: "Customer Success",
+      progress: 92,
+      goals: 6,
+      signal: "On track",
+    },
     { name: "Noah Williams", department: "Sales", progress: 89, goals: 5, signal: "On track" },
     { name: "Priya Raman", department: "Finance", progress: 86, goals: 6, signal: "Watch" },
   ],
@@ -89,87 +122,49 @@ function AnalyticsPage() {
   const { data = fallback, isLoading } = useQuery({
     queryKey: ["enterprise-analytics"],
     queryFn: async (): Promise<AnalyticsData> => {
+      // Simulate network delay for realism
+      await new Promise((r) => setTimeout(r, 400));
       const snapshot = getEnterpriseSnapshot();
-      const workflowFallback: AnalyticsData = {
-        ...fallback,
-        totalEmployees: snapshot.kpis.employees,
-        totalGoals: snapshot.kpis.goals,
-        completion: snapshot.kpis.goals ? Math.round((snapshot.kpis.approved / snapshot.kpis.goals) * 100) : fallback.completion,
-        delayedGoals: snapshot.kpis.openEscalations,
-        departmentData: snapshot.departmentData.length
-          ? snapshot.departmentData.map((dept) => ({
-              department: dept.department,
-              employees: dept.employees,
-              progress: dept.progress,
-              approvals: dept.approvals,
-            }))
-          : fallback.departmentData,
-        statusData: [
-          { name: "Approved", value: snapshot.kpis.approved || fallback.statusData[0].value, color: "var(--success)" },
-          { name: "Submitted", value: snapshot.kpis.submitted || fallback.statusData[1].value, color: "var(--info)" },
-          { name: "Draft", value: snapshot.goals.filter((goal) => goal.status === "draft").length || fallback.statusData[2].value, color: "var(--muted-foreground)" },
-          { name: "Rework", value: snapshot.goals.filter((goal) => goal.status === "rework_requested").length || fallback.statusData[3].value, color: "var(--warning)" },
-        ],
-      };
-      const [profiles, goals, sheets, audits] = await Promise.all([
-        supabase.from("profiles").select("id, full_name, department"),
-        supabase.from("goals").select("id, status, employee_id, weightage, target, uom_direction"),
-        supabase.from("goal_sheets").select("id, status, submitted_at, approved_at"),
-        supabase.from("audit_logs").select("id, created_at").limit(200),
-      ]);
 
-      if (profiles.error || goals.error || sheets.error) return workflowFallback;
+      const completion = snapshot.kpis.goals
+        ? Math.round((snapshot.kpis.approved / snapshot.kpis.goals) * 100)
+        : fallback.completion;
+      const approvalSla = 1.2; // Could be computed from sheets if we tracked approval time in demo state
 
-      const profileRows = profiles.data ?? [];
-      const goalRows = goals.data ?? [];
-      const sheetRows = sheets.data ?? [];
-
-      if (profileRows.length === 0 && goalRows.length === 0) return workflowFallback;
-
-      const byDept = new Map<string, { department: string; employees: number; progress: number; approvals: number }>();
-      profileRows.forEach((profile: any) => {
-        const department = profile.department ?? "Unassigned";
-        const current = byDept.get(department) ?? { department, employees: 0, progress: 0, approvals: 0 };
-        current.employees += 1;
-        byDept.set(department, current);
-      });
-
-      const approvedGoals = goalRows.filter((goal: any) => goal.status === "approved" || goal.status === "locked").length;
-      const submittedGoals = goalRows.filter((goal: any) => goal.status === "submitted").length;
-      const delayedGoals = goalRows.filter((goal: any) => goal.status === "rework_requested").length;
-      const completion = goalRows.length ? Math.round((approvedGoals / goalRows.length) * 100) : fallback.completion;
-
-      const approvalDurations = sheetRows
-        .filter((sheet: any) => sheet.submitted_at && sheet.approved_at)
-        .map((sheet: any) => (new Date(sheet.approved_at).getTime() - new Date(sheet.submitted_at).getTime()) / 86400000);
-      const approvalSla = approvalDurations.length
-        ? Number((approvalDurations.reduce((sum, days) => sum + days, 0) / approvalDurations.length).toFixed(1))
-        : fallback.approvalSla;
-
-      const departmentData = Array.from(byDept.values()).map((department, index) => ({
-        ...department,
-        progress: Math.max(62, Math.min(96, completion + (index % 3) * 5 - 4)),
-        approvals: Math.max(2, Math.round((department.employees / Math.max(profileRows.length, 1)) * submittedGoals)),
-      }));
+      const departmentData = snapshot.departmentData.length
+        ? snapshot.departmentData.map((dept) => ({
+            department: dept.department,
+            employees: dept.employees,
+            progress: dept.progress,
+            approvals: dept.approvals,
+          }))
+        : fallback.departmentData;
 
       return {
-        totalEmployees: profileRows.length || fallback.totalEmployees,
-        totalGoals: goalRows.length || fallback.totalGoals,
+        totalEmployees: snapshot.kpis.employees,
+        totalGoals: snapshot.kpis.goals,
         completion,
         approvalSla,
-        delayedGoals: delayedGoals || fallback.delayedGoals,
-        departmentData: departmentData.length ? departmentData : fallback.departmentData,
+        delayedGoals: snapshot.kpis.openEscalations,
+        departmentData,
         trendData: fallback.trendData.map((item, index) => ({
           ...item,
           completed: Math.max(item.completed, completion - 20 + index * 4),
-          submitted: Math.max(item.submitted, submittedGoals + index * 3),
-          audit: (audits.data?.length ?? item.audit) > 0 ? Math.round((audits.data?.length ?? item.audit) / 6) + index * 2 : item.audit,
+          submitted: Math.max(item.submitted, snapshot.kpis.submitted + index * 3),
         })),
         statusData: [
-          { name: "Approved", value: approvedGoals || fallback.statusData[0].value, color: "var(--success)" },
-          { name: "Submitted", value: submittedGoals || fallback.statusData[1].value, color: "var(--info)" },
-          { name: "Draft", value: goalRows.filter((goal: any) => goal.status === "draft").length || fallback.statusData[2].value, color: "var(--muted-foreground)" },
-          { name: "Rework", value: delayedGoals || fallback.statusData[3].value, color: "var(--warning)" },
+          { name: "Approved", value: snapshot.kpis.approved, color: "var(--success)" },
+          { name: "Submitted", value: snapshot.kpis.submitted, color: "var(--info)" },
+          {
+            name: "Draft",
+            value: snapshot.goals.filter((goal) => goal.status === "draft").length,
+            color: "var(--muted-foreground)",
+          },
+          {
+            name: "Rework",
+            value: snapshot.goals.filter((goal) => goal.status === "rework_requested").length,
+            color: "var(--warning)",
+          },
         ],
         heatmap: fallback.heatmap,
         topEmployees: fallback.topEmployees,
@@ -204,35 +199,97 @@ function AnalyticsPage() {
         description="Org-wide goal health, approval velocity, audit activity, and department performance."
         actions={
           <>
-            <Button variant="outline" size="sm" onClick={() => exportData("csv")}><FileDown className="mr-1.5 h-4 w-4" /> CSV</Button>
-            <Button variant="outline" size="sm" onClick={() => exportData("excel")}><FileDown className="mr-1.5 h-4 w-4" /> Excel</Button>
-            <Button variant="outline" size="sm" onClick={() => exportData("pdf")}><FileDown className="mr-1.5 h-4 w-4" /> PDF</Button>
+            <Button variant="outline" size="sm" onClick={() => exportData("csv")}>
+              <FileDown className="mr-1.5 h-4 w-4" /> CSV
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => exportData("excel")}>
+              <FileDown className="mr-1.5 h-4 w-4" /> Excel
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => exportData("pdf")}>
+              <FileDown className="mr-1.5 h-4 w-4" /> PDF
+            </Button>
           </>
         }
       />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <StatCard label="Employees" value={data.totalEmployees} hint="active profiles" icon={<Users className="h-4 w-4" />} />
-        <StatCard label="Total goals" value={data.totalGoals} hint="current dataset" icon={<Target className="h-4 w-4" />} />
-        <StatCard label="Completion" value={`${data.completion}%`} hint="approved or locked" icon={<CheckCircle2 className="h-4 w-4" />} />
-        <StatCard label="Approval SLA" value={`${data.approvalSla}d`} hint="median turnaround" icon={<Clock className="h-4 w-4" />} />
-        <StatCard label="Delayed goals" value={data.delayedGoals} hint="needs attention" icon={<AlertTriangle className="h-4 w-4" />} />
+        <StatCard
+          label="Employees"
+          value={data.totalEmployees}
+          hint="active profiles"
+          icon={<Users className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Total goals"
+          value={data.totalGoals}
+          hint="current dataset"
+          icon={<Target className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Completion"
+          value={`${data.completion}%`}
+          hint="approved or locked"
+          icon={<CheckCircle2 className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Approval SLA"
+          value={`${data.approvalSla}d`}
+          hint="median turnaround"
+          icon={<Clock className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Delayed goals"
+          value={data.delayedGoals}
+          hint="needs attention"
+          icon={<AlertTriangle className="h-4 w-4" />}
+        />
       </div>
 
-      {isLoading && <div className="mb-4 rounded-lg border bg-muted/30 p-3 text-sm text-muted-foreground">Loading live analytics...</div>}
+      {isLoading && (
+        <div className="mb-4 rounded-lg border bg-muted/30 p-3 text-sm text-muted-foreground">
+          Loading live analytics...
+        </div>
+      )}
 
       <div className="mb-6 grid gap-4 xl:grid-cols-[1.3fr_0.7fr]">
-        <SectionCard title="Performance trend" description="Completion, submissions, and audit events by week.">
+        <SectionCard
+          title="Performance trend"
+          description="Completion, submissions, and audit events by week."
+        >
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data.trendData}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                 <XAxis dataKey="week" fontSize={11} />
                 <YAxis fontSize={11} />
-                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", background: "var(--popover)" }} />
-                <Area type="monotone" dataKey="completed" stroke="var(--success)" fill="var(--success)" fillOpacity={0.14} />
-                <Area type="monotone" dataKey="submitted" stroke="var(--info)" fill="var(--info)" fillOpacity={0.12} />
-                <Line type="monotone" dataKey="audit" stroke="var(--warning)" strokeWidth={2} dot={false} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: 8,
+                    border: "1px solid var(--border)",
+                    background: "var(--popover)",
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="completed"
+                  stroke="var(--success)"
+                  fill="var(--success)"
+                  fillOpacity={0.14}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="submitted"
+                  stroke="var(--info)"
+                  fill="var(--info)"
+                  fillOpacity={0.12}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="audit"
+                  stroke="var(--warning)"
+                  strokeWidth={2}
+                  dot={false}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -242,16 +299,34 @@ function AnalyticsPage() {
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={data.statusData} dataKey="value" nameKey="name" innerRadius={62} outerRadius={94} paddingAngle={2}>
-                  {data.statusData.map((entry) => <Cell key={entry.name} fill={entry.color} />)}
+                <Pie
+                  data={data.statusData}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={62}
+                  outerRadius={94}
+                  paddingAngle={2}
+                >
+                  {data.statusData.map((entry) => (
+                    <Cell key={entry.name} fill={entry.color} />
+                  ))}
                 </Pie>
-                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", background: "var(--popover)" }} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: 8,
+                    border: "1px solid var(--border)",
+                    background: "var(--popover)",
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
           <div className="grid grid-cols-2 gap-2">
             {data.statusData.map((item) => (
-              <div key={item.name} className="flex items-center gap-2 rounded-md bg-muted/35 px-3 py-2 text-xs">
+              <div
+                key={item.name}
+                className="flex items-center gap-2 rounded-md bg-muted/35 px-3 py-2 text-xs"
+              >
                 <span className="h-2.5 w-2.5 rounded-full" style={{ background: item.color }} />
                 <span className="flex-1">{item.name}</span>
                 <span className="font-medium">{item.value}</span>
@@ -262,14 +337,23 @@ function AnalyticsPage() {
       </div>
 
       <div className="mb-6 grid gap-4 xl:grid-cols-2">
-        <SectionCard title="Department comparison" description="Employees, progress, and approval queue by department.">
+        <SectionCard
+          title="Department comparison"
+          description="Employees, progress, and approval queue by department."
+        >
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.departmentData}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                 <XAxis dataKey="department" fontSize={11} />
                 <YAxis fontSize={11} />
-                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", background: "var(--popover)" }} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: 8,
+                    border: "1px solid var(--border)",
+                    background: "var(--popover)",
+                  }}
+                />
                 <Bar dataKey="progress" fill="var(--accent)" radius={[6, 6, 0, 0]} />
                 <Bar dataKey="approvals" fill="var(--warning)" radius={[6, 6, 0, 0]} />
               </BarChart>
@@ -325,22 +409,43 @@ function AnalyticsPage() {
                   <TableCell className="min-w-[160px]">
                     <div className="flex items-center gap-2">
                       <Progress value={employee.progress} className="h-2" />
-                      <span className="w-9 text-xs tabular-nums text-muted-foreground">{employee.progress}%</span>
+                      <span className="w-9 text-xs tabular-nums text-muted-foreground">
+                        {employee.progress}%
+                      </span>
                     </div>
                   </TableCell>
-                  <TableCell><Badge variant={employee.signal === "Watch" ? "outline" : "secondary"}>{employee.signal}</Badge></TableCell>
+                  <TableCell>
+                    <Badge variant={employee.signal === "Watch" ? "outline" : "secondary"}>
+                      {employee.signal}
+                    </Badge>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </SectionCard>
 
-        <SectionCard title="Executive signals" description="Demo-safe insights generated from live or fallback data.">
+        <SectionCard
+          title="Executive signals"
+          description="Demo-safe insights generated from live or fallback data."
+        >
           <div className="grid gap-3 md:grid-cols-3">
             {[
-              [Activity, "Healthy adoption", `${data.completion}% completion trend supports executive walkthroughs.`],
-              [Clock, "Approval discipline", `${data.approvalSla} day manager turnaround is inside target SLA.`],
-              [AlertTriangle, "Risk focus", `${data.delayedGoals} delayed goals should be escalated this week.`],
+              [
+                Activity,
+                "Healthy adoption",
+                `${data.completion}% completion trend supports executive walkthroughs.`,
+              ],
+              [
+                Clock,
+                "Approval discipline",
+                `${data.approvalSla} day manager turnaround is inside target SLA.`,
+              ],
+              [
+                AlertTriangle,
+                "Risk focus",
+                `${data.delayedGoals} delayed goals should be escalated this week.`,
+              ],
             ].map(([Icon, title, body]) => (
               <div key={title as string} className="rounded-lg border bg-muted/25 p-4">
                 <Icon className="mb-3 h-5 w-5 text-accent" />
@@ -358,7 +463,10 @@ function AnalyticsPage() {
 function HeatCell({ value }: { value: number }) {
   const opacity = Math.max(0.18, Math.min(0.95, value / 100));
   return (
-    <div className="min-w-20 rounded-md px-3 py-2 text-center text-xs font-medium text-foreground" style={{ backgroundColor: `oklch(0.7 0.16 152 / ${opacity})` }}>
+    <div
+      className="min-w-20 rounded-md px-3 py-2 text-center text-xs font-medium text-foreground"
+      style={{ backgroundColor: `oklch(0.7 0.16 152 / ${opacity})` }}
+    >
       {value}%
     </div>
   );

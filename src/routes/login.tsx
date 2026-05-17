@@ -9,15 +9,10 @@ import {
   Target,
   Users,
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -29,21 +24,13 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  roleDashboardPath,
-  startDemoSession,
-  type AppRole,
-  useAuth,
-} from "@/lib/auth-context";
+import { roleDashboardPath, startDemoSession, type AppRole, useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
-const DEMO_USERS: Record<
-  AppRole,
-  { email: string; password: string; name: string }
-> = {
+const DEMO_USERS: Record<AppRole, { email: string; password: string; name: string }> = {
   employee: {
     email: "alex.employee@momentum.ai",
     password: "Demo!2345",
@@ -108,8 +95,7 @@ function LoginPage() {
     }
 
     setBusy(true);
-    const redirectTo =
-      typeof window !== "undefined" ? window.location.origin : undefined;
+    const redirectTo = typeof window !== "undefined" ? window.location.origin : undefined;
     const { error } = await supabase.auth.signUp({
       email: signupEmail,
       password: signupPassword,
@@ -157,8 +143,7 @@ function LoginPage() {
           data: {
             full_name: demoUser.name,
             role: demoRole,
-            department:
-              demoRole === "admin" ? "People Operations" : "Engineering",
+            department: demoRole === "admin" ? "People Operations" : "Engineering",
             job_title:
               demoRole === "admin"
                 ? "HR Administrator"
@@ -189,30 +174,23 @@ function LoginPage() {
     <div className="grid min-h-screen bg-slate-950 lg:grid-cols-[1.04fr_0.96fr]">
       <div className="relative hidden overflow-hidden p-12 text-white lg:flex lg:flex-col lg:justify-between">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(14,165,233,0.2),transparent_28%),radial-gradient(circle_at_82%_12%,rgba(16,185,129,0.16),transparent_24%),linear-gradient(135deg,rgba(15,23,42,1),rgba(17,24,39,0.94))]" />
-        <div className="relative flex items-center gap-2">
-          <div className="grid h-10 w-10 place-items-center rounded-lg bg-white text-slate-950">
-            <PanelsTopLeft className="h-5 w-5" />
+        <Link to="/" className="relative flex items-center gap-3 hover:opacity-90 transition-opacity w-fit outline-none">
+          <Logo variant="monochrome" className="text-white scale-110 origin-left" />
+          <div className="flex flex-col mt-0.5">
+            <span className="text-[11px] font-medium tracking-widest text-sky-400/80 uppercase">Enterprise Workflow OS</span>
           </div>
-          <div>
-            <span className="block text-lg font-semibold tracking-tight">
-              Momentum AI
-            </span>
-            <span className="text-xs text-slate-400">Enterprise Workflow OS</span>
-          </div>
-        </div>
+        </Link>
 
         <div className="relative max-w-xl space-y-7">
           <div className="w-fit rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-slate-300 backdrop-blur">
             AI-powered performance operations
           </div>
           <h1 className="text-5xl font-semibold tracking-tight">
-            Run goals, approvals, audits, and insights from one premium
-            workspace.
+            Run goals, approvals, audits, and insights from one premium workspace.
           </h1>
           <p className="text-base leading-8 text-slate-300">
-            Momentum AI helps employees, managers, and HR teams move from
-            quarterly intent to measurable outcomes with polished workflows and
-            executive-ready analytics.
+            Momentum AI helps employees, managers, and HR teams move from quarterly intent to
+            measurable outcomes with polished workflows and executive-ready analytics.
           </p>
           <div className="grid grid-cols-3 gap-3">
             <Stat icon={<Target className="h-4 w-4" />} label="Goal OS" />
@@ -222,18 +200,14 @@ function LoginPage() {
         </div>
 
         <div className="relative rounded-xl border border-white/10 bg-white/[0.06] p-4 text-xs text-slate-400 backdrop-blur">
-          Momentum AI Enterprise Edition. Built for demo-ready workflow
-          operations.
+          Momentum AI Enterprise Edition. Built for demo-ready workflow operations.
         </div>
       </div>
 
       <div className="flex items-center justify-center bg-background p-6 lg:p-12">
         <div className="w-full max-w-md space-y-6">
-          <Link to="/" className="flex items-center gap-2 lg:hidden">
-            <div className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground">
-              <PanelsTopLeft className="h-5 w-5" />
-            </div>
-            <span className="font-semibold tracking-tight">Momentum AI</span>
+          <Link to="/" className="flex lg:hidden mb-4 hover:opacity-80 outline-none">
+            <Logo />
           </Link>
 
           <Card className="border-border/70 bg-card/95 shadow-xl">
@@ -271,17 +245,11 @@ function LoginPage() {
                         required
                         autoComplete="current-password"
                         value={loginPassword}
-                        onChange={(event) =>
-                          setLoginPassword(event.target.value)
-                        }
+                        onChange={(event) => setLoginPassword(event.target.value)}
                       />
                     </div>
                     <Button type="submit" disabled={busy} className="w-full">
-                      {busy ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        "Sign in"
-                      )}
+                      {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sign in"}
                     </Button>
                   </form>
                 </TabsContent>
@@ -302,9 +270,7 @@ function LoginPage() {
                         <Label htmlFor="su-role">Role</Label>
                         <Select
                           value={signupRole}
-                          onValueChange={(value) =>
-                            setSignupRole(value as AppRole)
-                          }
+                          onValueChange={(value) => setSignupRole(value as AppRole)}
                         >
                           <SelectTrigger id="su-role">
                             <SelectValue />
@@ -321,9 +287,7 @@ function LoginPage() {
                         <Input
                           id="su-dept"
                           value={signupDept}
-                          onChange={(event) =>
-                            setSignupDept(event.target.value)
-                          }
+                          onChange={(event) => setSignupDept(event.target.value)}
                         />
                       </div>
                     </div>
@@ -345,17 +309,11 @@ function LoginPage() {
                         required
                         minLength={8}
                         value={signupPassword}
-                        onChange={(event) =>
-                          setSignupPassword(event.target.value)
-                        }
+                        onChange={(event) => setSignupPassword(event.target.value)}
                       />
                     </div>
                     <Button type="submit" disabled={busy} className="w-full">
-                      {busy ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        "Create account"
-                      )}
+                      {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create account"}
                     </Button>
                   </form>
                 </TabsContent>
@@ -371,19 +329,17 @@ function LoginPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-3 gap-2">
-              {(["employee", "manager", "admin"] as AppRole[]).map(
-                (demoRole) => (
-                  <Button
-                    key={demoRole}
-                    variant="outline"
-                    disabled={busy}
-                    onClick={() => handleDemo(demoRole)}
-                    className="capitalize"
-                  >
-                    {demoRole}
-                  </Button>
-                ),
-              )}
+              {(["employee", "manager", "admin"] as AppRole[]).map((demoRole) => (
+                <Button
+                  key={demoRole}
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() => handleDemo(demoRole)}
+                  className="capitalize"
+                >
+                  {demoRole}
+                </Button>
+              ))}
             </CardContent>
           </Card>
 

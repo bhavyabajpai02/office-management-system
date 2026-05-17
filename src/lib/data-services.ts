@@ -24,7 +24,13 @@ export const demoTeamAnalytics: TeamAnalyticsPoint[] = [
 
 export const demoTeamPerformance: TeamPerformanceRow[] = [
   { name: "Alex Morgan", department: "Engineering", progress: 86, checkins: 4, status: "Ahead" },
-  { name: "Maya Patel", department: "Customer Success", progress: 78, checkins: 3, status: "Watch" },
+  {
+    name: "Maya Patel",
+    department: "Customer Success",
+    progress: 78,
+    checkins: 3,
+    status: "Watch",
+  },
   { name: "Jordan Kim", department: "Engineering", progress: 61, checkins: 2, status: "At risk" },
 ];
 
@@ -41,11 +47,12 @@ export async function fetchTeamPerformance(managerId?: string): Promise<TeamPerf
       department: profile.department ?? "Unassigned",
       progress: [86, 78, 61, 92, 74][index % 5],
       checkins: [4, 3, 2, 4, 3][index % 5],
-      status: ([86, 78, 61, 92, 74][index % 5] ?? 75) >= 85
-        ? "Ahead"
-        : ([86, 78, 61, 92, 74][index % 5] ?? 75) >= 70
-          ? "On track"
-          : "At risk",
+      status:
+        ([86, 78, 61, 92, 74][index % 5] ?? 75) >= 85
+          ? "Ahead"
+          : ([86, 78, 61, 92, 74][index % 5] ?? 75) >= 70
+            ? "On track"
+            : "At risk",
     }));
   } catch {
     return demoTeamPerformance;

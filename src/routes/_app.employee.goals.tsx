@@ -24,13 +24,33 @@ import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { THRUST_AREAS, calcProgress, type UomDirection } from "@/lib/progress";
 import {
@@ -126,7 +146,8 @@ export function GoalsPage() {
 
   const filteredGoals = useMemo(() => {
     return goals.filter((goal) => {
-      const hay = `${goal.title} ${goal.description ?? ""} ${goal.thrust_area} ${goal.priority}`.toLowerCase();
+      const hay =
+        `${goal.title} ${goal.description ?? ""} ${goal.thrust_area} ${goal.priority}`.toLowerCase();
       if (search && !hay.includes(search.toLowerCase())) return false;
       if (statusFilter !== "all" && goal.status !== statusFilter) return false;
       if (priorityFilter !== "all" && goal.priority !== priorityFilter) return false;
@@ -135,7 +156,23 @@ export function GoalsPage() {
   }, [goals, priorityFilter, search, statusFilter]);
 
   const saveGoal = useMutation({
-    mutationFn: async ({ goal, patch }: { goal?: DemoGoal; patch: Partial<DemoGoal> & Pick<DemoGoal, "title" | "thrust_area" | "target" | "weightage" | "uom_type" | "uom_direction" | "priority"> }) => {
+    mutationFn: async ({
+      goal,
+      patch,
+    }: {
+      goal?: DemoGoal;
+      patch: Partial<DemoGoal> &
+        Pick<
+          DemoGoal,
+          | "title"
+          | "thrust_area"
+          | "target"
+          | "weightage"
+          | "uom_type"
+          | "uom_direction"
+          | "priority"
+        >;
+    }) => {
       if (!user) throw new Error("You must be signed in");
       if (workspace.source === "demo") {
         if (goal) updateDemoGoal(goal.id, patch);
@@ -165,7 +202,10 @@ export function GoalsPage() {
       }
 
       if (goal) {
-        const { error } = await supabase.from("goals").update(toGoalPayload(patch)).eq("id", goal.id);
+        const { error } = await supabase
+          .from("goals")
+          .update(toGoalPayload(patch))
+          .eq("id", goal.id);
         if (error) throw error;
       } else {
         const { error } = await supabase.from("goals").insert({
@@ -207,7 +247,8 @@ export function GoalsPage() {
       if (goals.length === 0) throw new Error("Add at least one goal before submitting");
       if (goals.length > 8) throw new Error("Maximum 8 goals allowed");
       if (totalWeight !== 100) throw new Error("Total weightage must equal 100%");
-      if (goals.some((goal) => Number(goal.weightage) < 10)) throw new Error("Every goal needs at least 10% weightage");
+      if (goals.some((goal) => Number(goal.weightage) < 10))
+        throw new Error("Every goal needs at least 10% weightage");
       if (workspace.source === "demo") {
         submitDemoSheet();
         return;
@@ -232,7 +273,17 @@ export function GoalsPage() {
   });
 
   const saveProgress = useMutation({
-    mutationFn: async ({ goal, actual, status, comment }: { goal: DemoGoal; actual: number; status: string; comment: string }) => {
+    mutationFn: async ({
+      goal,
+      actual,
+      status,
+      comment,
+    }: {
+      goal: DemoGoal;
+      actual: number;
+      status: string;
+      comment: string;
+    }) => {
       const existing = goal.check_ins?.find((checkIn) => checkIn.quarter === currentQuarter);
       if (workspace.source === "demo") {
         upsertDemoCheckIn({
@@ -279,13 +330,21 @@ export function GoalsPage() {
         actions={
           <>
             <Button asChild variant="outline">
-              <Link to="/ai"><Sparkles className="mr-1.5 h-4 w-4" /> AI Copilot</Link>
+              <Link to="/ai">
+                <Sparkles className="mr-1.5 h-4 w-4" /> AI Copilot
+              </Link>
             </Button>
-            <Button variant="outline" disabled={locked || goals.length >= 8} onClick={() => setDialogGoal("new")}>
-              <Plus className="mr-1.5 h-4 w-4" /> Create goal
+            <Button variant="outline" disabled={locked || goals.length >= 8} asChild>
+              <Link to="/employee/create-goal">
+                <Plus className="mr-1.5 h-4 w-4" /> Create goal
+              </Link>
             </Button>
             <Button disabled={locked || submit.isPending} onClick={() => submit.mutate()}>
-              {submit.isPending ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Send className="mr-1.5 h-4 w-4" />}
+              {submit.isPending ? (
+                <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="mr-1.5 h-4 w-4" />
+              )}
               Submit
             </Button>
           </>
@@ -295,13 +354,24 @@ export function GoalsPage() {
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <SectionCard title="Goals">
           <div className="flex items-end justify-between">
-            <div className="text-3xl font-semibold tabular-nums">{goals.length}<span className="text-base text-muted-foreground">/8</span></div>
+            <div className="text-3xl font-semibold tabular-nums">
+              {goals.length}
+              <span className="text-base text-muted-foreground">/8</span>
+            </div>
             <Target className="h-5 w-5 text-muted-foreground" />
           </div>
           <Progress value={(goals.length / 8) * 100} className="mt-3 h-2" />
         </SectionCard>
         <SectionCard title="Weightage">
-          <div className={totalWeight === 100 ? "text-3xl font-semibold text-success" : "text-3xl font-semibold text-warning-foreground"}>{totalWeight}%</div>
+          <div
+            className={
+              totalWeight === 100
+                ? "text-3xl font-semibold text-success"
+                : "text-3xl font-semibold text-warning-foreground"
+            }
+          >
+            {totalWeight}%
+          </div>
           <Progress value={Math.min(totalWeight, 100)} className="mt-3 h-2" />
         </SectionCard>
         <SectionCard title="Average progress">
@@ -314,7 +384,9 @@ export function GoalsPage() {
         <SectionCard title="Sheet status">
           <StatusBadge status={workspace.sheet.status} />
           <p className="mt-3 text-sm text-muted-foreground">
-            {locked ? "Approved sheets are locked for editing." : "Edit, balance, and submit when ready."}
+            {locked
+              ? "Approved sheets are locked for editing."
+              : "Edit, balance, and submit when ready."}
           </p>
         </SectionCard>
       </div>
@@ -322,35 +394,75 @@ export function GoalsPage() {
       <SectionCard
         title="Goal workspace"
         description="Search, filter, edit, archive, and update progress from one place."
-        actions={<Button size="sm" variant="outline" onClick={() => setDialogGoal("new")} disabled={locked}><Plus className="mr-1 h-4 w-4" /> Add</Button>}
+        actions={
+          <Button size="sm" variant="outline" disabled={locked} asChild>
+            <Link to="/employee/create-goal">
+              <Plus className="mr-1 h-4 w-4" /> Add
+            </Link>
+          </Button>
+        }
       >
         <div className="mb-4 flex flex-col gap-2 lg:flex-row lg:items-center">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input className="pl-9" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search goals, thrust areas, priorities..." />
+            <Input
+              className="pl-9"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search goals, thrust areas, priorities..."
+            />
           </div>
-          <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as typeof statusFilter)}>
-            <SelectTrigger className="lg:w-48"><Filter className="mr-2 h-4 w-4" /><SelectValue /></SelectTrigger>
+          <Select
+            value={statusFilter}
+            onValueChange={(value) => setStatusFilter(value as typeof statusFilter)}
+          >
+            <SelectTrigger className="lg:w-48">
+              <Filter className="mr-2 h-4 w-4" />
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
-              {statuses.map((status) => <SelectItem key={status} value={status}>{status === "all" ? "All statuses" : status.replace("_", " ")}</SelectItem>)}
+              {statuses.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {status === "all" ? "All statuses" : status.replace("_", " ")}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-          <Select value={priorityFilter} onValueChange={(value) => setPriorityFilter(value as typeof priorityFilter)}>
-            <SelectTrigger className="lg:w-44"><SelectValue /></SelectTrigger>
+          <Select
+            value={priorityFilter}
+            onValueChange={(value) => setPriorityFilter(value as typeof priorityFilter)}
+          >
+            <SelectTrigger className="lg:w-44">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
-              {priorities.map((priority) => <SelectItem key={priority} value={priority}>{priority === "all" ? "All priorities" : priority}</SelectItem>)}
+              {priorities.map((priority) => (
+                <SelectItem key={priority} value={priority}>
+                  {priority === "all" ? "All priorities" : priority}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
         {isLoading ? (
-          <div className="space-y-3">{[0, 1, 2].map((item) => <div key={item} className="h-16 animate-pulse rounded-lg bg-muted/40" />)}</div>
+          <div className="space-y-3">
+            {[0, 1, 2].map((item) => (
+              <div key={item} className="h-16 animate-pulse rounded-lg bg-muted/40" />
+            ))}
+          </div>
         ) : filteredGoals.length === 0 ? (
           <EmptyState
             icon={<Target className="h-8 w-8" />}
             title="No matching goals"
             description="Clear filters or create a new goal with the AI Copilot."
-            action={<Button onClick={() => setDialogGoal("new")}><Plus className="mr-1.5 h-4 w-4" /> Create goal</Button>}
+            action={
+              <Button asChild>
+                <Link to="/employee/create-goal">
+                  <Plus className="mr-1.5 h-4 w-4" /> Create goal
+                </Link>
+              </Button>
+            }
           />
         ) : (
           <Table>
@@ -375,31 +487,58 @@ export function GoalsPage() {
                         {goal.title}
                         {goal.is_shared && <Badge variant="secondary">Shared</Badge>}
                       </div>
-                      <div className="mt-1 text-xs text-muted-foreground">{goal.thrust_area} · Target {goal.target}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {goal.thrust_area} · Target {goal.target}
+                      </div>
                     </TableCell>
-                    <TableCell><PriorityBadge priority={goal.priority} /></TableCell>
+                    <TableCell>
+                      <PriorityBadge priority={goal.priority} />
+                    </TableCell>
                     <TableCell className="min-w-[180px]">
                       <button className="w-full text-left" onClick={() => setProgressGoal(goal)}>
                         <div className="flex items-center gap-2">
                           <Progress value={pct} className="h-2" />
-                          <span className="w-9 text-xs tabular-nums text-muted-foreground">{pct}%</span>
+                          <span className="w-9 text-xs tabular-nums text-muted-foreground">
+                            {pct}%
+                          </span>
                         </div>
                       </button>
                     </TableCell>
                     <TableCell className="tabular-nums">{goal.weightage}%</TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      <span className="inline-flex items-center gap-1"><CalendarClock className="h-3.5 w-3.5" /> {goal.deadline ?? "-"}</span>
+                      <span className="inline-flex items-center gap-1">
+                        <CalendarClock className="h-3.5 w-3.5" /> {goal.deadline ?? "-"}
+                      </span>
                     </TableCell>
-                    <TableCell><StatusBadge status={goal.status} /></TableCell>
+                    <TableCell>
+                      <StatusBadge status={goal.status} />
+                    </TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" onClick={() => setProgressGoal(goal)} aria-label="Update progress">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => setProgressGoal(goal)}
+                          aria-label="Update progress"
+                        >
                           <TrendingUp className="h-4 w-4" />
                         </Button>
-                        <Button size="icon" variant="ghost" disabled={locked || goal.is_shared} onClick={() => setDialogGoal(goal)} aria-label="Edit goal">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          disabled={locked || goal.is_shared}
+                          onClick={() => setDialogGoal(goal)}
+                          aria-label="Edit goal"
+                        >
                           <Edit3 className="h-4 w-4" />
                         </Button>
-                        <Button size="icon" variant="ghost" disabled={locked || goal.is_shared} onClick={() => setArchiveGoal(goal)} aria-label="Archive goal">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          disabled={locked || goal.is_shared}
+                          onClick={() => setArchiveGoal(goal)}
+                          aria-label="Archive goal"
+                        >
                           <Archive className="h-4 w-4" />
                         </Button>
                       </div>
@@ -413,15 +552,33 @@ export function GoalsPage() {
       </SectionCard>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_360px]">
-        <SectionCard title="Activity history" description="Recent workflow events in this goal sheet.">
+        <SectionCard
+          title="Activity history"
+          description="Recent workflow events in this goal sheet."
+        >
           <div className="space-y-3">
-            {(workspace.activity.length ? workspace.activity : [{ id: "empty", created_at: new Date().toISOString(), actor: "Momentum AI", action: "Workspace ready", detail: "Create or update goals to build activity history." }]).map((item) => (
+            {(workspace.activity.length
+              ? workspace.activity
+              : [
+                  {
+                    id: "empty",
+                    created_at: new Date().toISOString(),
+                    actor: "Momentum AI",
+                    action: "Workspace ready",
+                    detail: "Create or update goals to build activity history.",
+                  },
+                ]
+            ).map((item) => (
               <div key={item.id} className="rounded-lg border bg-muted/25 p-3 text-sm">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="font-medium">{item.action}</span>
-                  <span className="text-xs text-muted-foreground">{new Date(item.created_at).toLocaleString()}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(item.created_at).toLocaleString()}
+                  </span>
                 </div>
-                <p className="mt-1 text-muted-foreground">{item.actor} · {item.detail}</p>
+                <p className="mt-1 text-muted-foreground">
+                  {item.actor} · {item.detail}
+                </p>
               </div>
             ))}
           </div>
@@ -432,8 +589,15 @@ export function GoalsPage() {
             <ReadinessRow done={goals.length > 0} label="At least one goal exists" />
             <ReadinessRow done={goals.length <= 8} label="No more than 8 goals" />
             <ReadinessRow done={totalWeight === 100} label="Weightage totals 100%" />
-            <ReadinessRow done={goals.every((goal) => Number(goal.weightage) >= 10)} label="Every goal has at least 10%" />
-            <Button className="w-full" disabled={locked || submit.isPending} onClick={() => submit.mutate()}>
+            <ReadinessRow
+              done={goals.every((goal) => Number(goal.weightage) >= 10)}
+              label="Every goal has at least 10%"
+            />
+            <Button
+              className="w-full"
+              disabled={locked || submit.isPending}
+              onClick={() => submit.mutate()}
+            >
               <Send className="mr-1.5 h-4 w-4" /> Submit for approval
             </Button>
           </div>
@@ -482,7 +646,14 @@ function GoalDialog({
   suggestedWeight: number;
   saving: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (goal: DemoGoal | null, patch: Partial<DemoGoal> & Pick<DemoGoal, "title" | "thrust_area" | "target" | "weightage" | "uom_type" | "uom_direction" | "priority">) => void;
+  onSave: (
+    goal: DemoGoal | null,
+    patch: Partial<DemoGoal> &
+      Pick<
+        DemoGoal,
+        "title" | "thrust_area" | "target" | "weightage" | "uom_type" | "uom_direction" | "priority"
+      >,
+  ) => void;
 }) {
   const [title, setTitle] = useState(goal?.title ?? "");
   const [description, setDescription] = useState(goal?.description ?? "");
@@ -506,75 +677,129 @@ function GoalDialog({
   }, [goal, open, suggestedWeight]);
 
   const selectedUom = UOM_OPTIONS.find((option) => option.value === uom) ?? UOM_OPTIONS[0];
-  const invalid = !title.trim() || Number(weightage) < 10 || Number(weightage) > 100 || Number(target) <= 0;
+  const invalid =
+    !title.trim() || Number(weightage) < 10 || Number(weightage) > 100 || Number(target) <= 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>{goal ? "Edit goal" : "Create goal"}</DialogTitle>
-          <DialogDescription>Use a measurable outcome, clear owner behavior, weightage, and due date.</DialogDescription>
+          <DialogDescription>
+            Use a measurable outcome, clear owner behavior, weightage, and due date.
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">
           <div className="grid gap-1.5">
             <Label>Goal title</Label>
-            <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="e.g. Improve enterprise onboarding completion" />
+            <Input
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="e.g. Improve enterprise onboarding completion"
+            />
           </div>
           <div className="grid gap-1.5">
             <Label>Description</Label>
-            <Textarea rows={3} value={description} onChange={(event) => setDescription(event.target.value)} />
+            <Textarea
+              rows={3}
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+            />
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="grid gap-1.5">
               <Label>Thrust area</Label>
               <Select value={thrustArea} onValueChange={setThrustArea}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{THRUST_AREAS.map((area) => <SelectItem key={area} value={area}>{area}</SelectItem>)}</SelectContent>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {THRUST_AREAS.map((area) => (
+                    <SelectItem key={area} value={area}>
+                      {area}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
             <div className="grid gap-1.5">
               <Label>Priority</Label>
               <Select value={priority} onValueChange={(value) => setPriority(value as Priority)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{(["High", "Medium", "Low"] as const).map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {(["High", "Medium", "Low"] as const).map((item) => (
+                    <SelectItem key={item} value={item}>
+                      {item}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
             <div className="grid gap-1.5">
               <Label>Unit of measure</Label>
               <Select value={uom} onValueChange={(value) => setUom(value as DemoGoal["uom_type"])}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{UOM_OPTIONS.map((option) => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {UOM_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
             <div className="grid gap-1.5">
               <Label>Target</Label>
-              <Input type="number" min={1} value={target} onChange={(event) => setTarget(event.target.value)} />
+              <Input
+                type="number"
+                min={1}
+                value={target}
+                onChange={(event) => setTarget(event.target.value)}
+              />
             </div>
             <div className="grid gap-1.5">
               <Label>Weightage (%)</Label>
-              <Input type="number" min={10} max={100} value={weightage} onChange={(event) => setWeightage(event.target.value)} />
+              <Input
+                type="number"
+                min={10}
+                max={100}
+                value={weightage}
+                onChange={(event) => setWeightage(event.target.value)}
+              />
             </div>
             <div className="grid gap-1.5">
               <Label>Due date</Label>
-              <Input type="date" value={deadline} onChange={(event) => setDeadline(event.target.value)} />
+              <Input
+                type="date"
+                value={deadline}
+                onChange={(event) => setDeadline(event.target.value)}
+              />
             </div>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
           <Button
             disabled={invalid || saving}
-            onClick={() => onSave(goal, {
-              title: title.trim(),
-              description: description.trim() || null,
-              thrust_area: thrustArea,
-              target: Number(target),
-              weightage: Number(weightage),
-              deadline: deadline || null,
-              uom_type: uom,
-              uom_direction: selectedUom.direction,
-              priority,
-            })}
+            onClick={() =>
+              onSave(goal, {
+                title: title.trim(),
+                description: description.trim() || null,
+                thrust_area: thrustArea,
+                target: Number(target),
+                weightage: Number(weightage),
+                deadline: deadline || null,
+                uom_type: uom,
+                uom_direction: selectedUom.direction,
+                priority,
+              })
+            }
           >
             {saving && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
             {goal ? "Save changes" : "Create goal"}
@@ -610,7 +835,11 @@ function ProgressDialog({
   }, [goal]);
 
   if (!goal) return null;
-  const progress = calcProgress({ direction: goal.uom_direction, target: Number(goal.target), actual: Number(actual) });
+  const progress = calcProgress({
+    direction: goal.uom_direction,
+    target: Number(goal.target),
+    actual: Number(actual),
+  });
 
   return (
     <Dialog open={!!goal} onOpenChange={onOpenChange}>
@@ -629,13 +858,30 @@ function ProgressDialog({
           </div>
           <div className="grid gap-2">
             <Label>Actual value</Label>
-            <Slider value={[Number(actual)]} min={0} max={Math.max(Number(goal.target), 100)} step={1} onValueChange={([value]) => setActual(value ?? 0)} />
-            <Input type="number" value={actual} onChange={(event) => setActual(Number(event.target.value))} />
+            <Slider
+              value={[Number(actual)]}
+              min={0}
+              max={Math.max(Number(goal.target), 100)}
+              step={1}
+              onValueChange={([value]) => setActual(value ?? 0)}
+            />
+            <Input
+              type="number"
+              value={actual}
+              onChange={(event) => setActual(Number(event.target.value))}
+            />
           </div>
           <div className="grid gap-1.5">
             <Label>Status</Label>
-            <Select value={status} onValueChange={(value) => setStatus(value as "not_started" | "on_track" | "blocked" | "completed")}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select
+              value={status}
+              onValueChange={(value) =>
+                setStatus(value as "not_started" | "on_track" | "blocked" | "completed")
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="not_started">Not started</SelectItem>
                 <SelectItem value="on_track">On track</SelectItem>
@@ -646,13 +892,27 @@ function ProgressDialog({
           </div>
           <div className="grid gap-1.5">
             <Label>Progress note</Label>
-            <Textarea rows={3} value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Summarize progress, risks, or manager decisions needed." />
+            <Textarea
+              rows={3}
+              value={comment}
+              onChange={(event) => setComment(event.target.value)}
+              placeholder="Summarize progress, risks, or manager decisions needed."
+            />
           </div>
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button disabled={saving} onClick={() => onSave({ goal, actual: Number(actual), status, comment })}>
-            {saving ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-1.5 h-4 w-4" />}
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button
+            disabled={saving}
+            onClick={() => onSave({ goal, actual: Number(actual), status, comment })}
+          >
+            {saving ? (
+              <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+            ) : (
+              <CheckCircle2 className="mr-1.5 h-4 w-4" />
+            )}
             Save progress
           </Button>
         </DialogFooter>
@@ -662,8 +922,14 @@ function ProgressDialog({
 }
 
 function PriorityBadge({ priority }: { priority: Priority }) {
-  if (priority === "High") return <Badge className="bg-destructive text-destructive-foreground hover:bg-destructive">High</Badge>;
-  if (priority === "Medium") return <Badge className="bg-warning text-warning-foreground hover:bg-warning">Medium</Badge>;
+  if (priority === "High")
+    return (
+      <Badge className="bg-destructive text-destructive-foreground hover:bg-destructive">
+        High
+      </Badge>
+    );
+  if (priority === "Medium")
+    return <Badge className="bg-warning text-warning-foreground hover:bg-warning">Medium</Badge>;
   return <Badge variant="outline">Low</Badge>;
 }
 
@@ -671,7 +937,11 @@ function ReadinessRow({ done, label }: { done: boolean; label: string }) {
   return (
     <div className="flex items-center justify-between rounded-md border bg-muted/20 px-3 py-2">
       <span>{label}</span>
-      {done ? <CheckCircle2 className="h-4 w-4 text-success" /> : <span className="h-2.5 w-2.5 rounded-full bg-warning" />}
+      {done ? (
+        <CheckCircle2 className="h-4 w-4 text-success" />
+      ) : (
+        <span className="h-2.5 w-2.5 rounded-full bg-warning" />
+      )}
     </div>
   );
 }
@@ -682,7 +952,8 @@ function normalizeGoal(goal: any): DemoGoal {
     description: goal.description ?? null,
     target: Number(goal.target ?? 100),
     weightage: Number(goal.weightage ?? 10),
-    priority: (goal.priority as Priority | undefined) ?? inferPriority(Number(goal.weightage ?? 10)),
+    priority:
+      (goal.priority as Priority | undefined) ?? inferPriority(Number(goal.weightage ?? 10)),
     status: goal.status as GoalStatus,
     is_shared: Boolean(goal.is_shared),
     shared_goal_id: goal.shared_goal_id ?? null,
@@ -698,7 +969,10 @@ function inferPriority(weight: number): Priority {
 }
 
 function progressForGoal(goal: DemoGoal) {
-  const actual = (goal.check_ins ?? []).reduce((sum, checkIn) => sum + Number(checkIn.actual ?? 0), 0);
+  const actual = (goal.check_ins ?? []).reduce(
+    (sum, checkIn) => sum + Number(checkIn.actual ?? 0),
+    0,
+  );
   return calcProgress({
     direction: goal.uom_direction,
     target: Number(goal.target),

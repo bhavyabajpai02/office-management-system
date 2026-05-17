@@ -9,7 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { getDemoNotifications, markAllDemoNotificationsRead, markDemoNotificationRead } from "@/lib/demo-workflows";
+import {
+  getDemoNotifications,
+  markAllDemoNotificationsRead,
+  markDemoNotificationRead,
+} from "@/lib/demo-workflows";
 
 export const Route = createFileRoute("/_app/notifications")({
   component: NotificationsPage,
@@ -45,10 +49,7 @@ function NotificationsPage() {
         markDemoNotificationRead(id);
         return;
       }
-      const { error } = await supabase
-        .from("notifications")
-        .update({ read: true })
-        .eq("id", id);
+      const { error } = await supabase.from("notifications").update({ read: true }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: (_data, id) => {

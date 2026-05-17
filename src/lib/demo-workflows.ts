@@ -1,6 +1,12 @@
 import type { UomDirection } from "@/lib/progress";
 
-export type GoalStatus = "draft" | "submitted" | "rework_requested" | "approved" | "locked" | "archived";
+export type GoalStatus =
+  | "draft"
+  | "submitted"
+  | "rework_requested"
+  | "approved"
+  | "locked"
+  | "archived";
 export type CheckInStatus = "not_started" | "on_track" | "blocked" | "completed";
 export type Priority = "High" | "Medium" | "Low";
 export type Quarter = "Q1" | "Q2" | "Q3" | "Q4";
@@ -218,7 +224,8 @@ function seededOrgSettings(): DemoOrgSettings {
     mfaRequired: true,
     aiSummaries: true,
     weeklyDigest: true,
-    announcement: "Q2 check-ins are open. Managers should complete reviews within two business days.",
+    announcement:
+      "Q2 check-ins are open. Managers should complete reviews within two business days.",
   };
 }
 
@@ -312,7 +319,12 @@ function seededEscalations(createdAt = nowIso()): DemoEscalation[] {
       summary: "Goal sheet review is close to the two-day manager SLA.",
       status: "open",
       comments: [
-        { id: "esc-comment-1", author: "Momentum AI", body: "SLA timer started after employee submission.", created_at: createdAt },
+        {
+          id: "esc-comment-1",
+          author: "Momentum AI",
+          body: "SLA timer started after employee submission.",
+          created_at: createdAt,
+        },
       ],
       history: [{ id: "esc-history-1", action: "Escalation opened", created_at: createdAt }],
     },
@@ -338,7 +350,9 @@ function seededEscalations(createdAt = nowIso()): DemoEscalation[] {
       summary: "Automation objective is under target and has a dependency blocker.",
       status: "resolved",
       comments: [],
-      history: [{ id: "esc-history-3", action: "Resolved after manager coaching", created_at: createdAt }],
+      history: [
+        { id: "esc-history-3", action: "Resolved after manager coaching", created_at: createdAt },
+      ],
     },
   ];
 }
@@ -353,7 +367,8 @@ function seedState(employeeId = demoEmployeeId): DemoState {
       employee_id: employeeId,
       thrust_area: "Customer Experience",
       title: "Reduce enterprise support response time",
-      description: "Improve first response speed for priority support cases while maintaining quality targets.",
+      description:
+        "Improve first response speed for priority support cases while maintaining quality targets.",
       uom_type: "percentage",
       uom_direction: "min",
       target: 100,
@@ -375,7 +390,8 @@ function seedState(employeeId = demoEmployeeId): DemoState {
       employee_id: employeeId,
       thrust_area: "Digital Transformation",
       title: "Automate recurring performance reports",
-      description: "Publish reliable weekly reporting automation for goals, check-ins, and manager approvals.",
+      description:
+        "Publish reliable weekly reporting automation for goals, check-ins, and manager approvals.",
       uom_type: "numeric",
       uom_direction: "min",
       target: 12,
@@ -397,7 +413,8 @@ function seedState(employeeId = demoEmployeeId): DemoState {
       employee_id: employeeId,
       thrust_area: "Quality & Compliance",
       title: "Improve release readiness quality",
-      description: "Reduce review rework by introducing pre-release acceptance checks and better documentation.",
+      description:
+        "Reduce review rework by introducing pre-release acceptance checks and better documentation.",
       uom_type: "percentage",
       uom_direction: "min",
       target: 100,
@@ -419,7 +436,8 @@ function seedState(employeeId = demoEmployeeId): DemoState {
       employee_id: employeeId,
       thrust_area: "People & Culture",
       title: "Strengthen cross-functional delivery rhythm",
-      description: "Run consistent stakeholder reviews and reduce unresolved blockers across product initiatives.",
+      description:
+        "Run consistent stakeholder reviews and reduce unresolved blockers across product initiatives.",
       uom_type: "numeric",
       uom_direction: "min",
       target: 8,
@@ -538,7 +556,8 @@ function writeState(state: DemoState) {
 
 function addNotification(
   state: DemoState,
-  notification: Omit<DemoNotification, "id" | "created_at" | "read"> & Partial<Pick<DemoNotification, "read" | "created_at">>,
+  notification: Omit<DemoNotification, "id" | "created_at" | "read"> &
+    Partial<Pick<DemoNotification, "read" | "created_at">>,
 ) {
   state.notifications = [
     {
@@ -578,7 +597,15 @@ function recordWorkflow(
     notifications?: Array<Omit<DemoNotification, "id" | "created_at" | "read">>;
   },
 ) {
-  addActivity(state, event.action, event.detail, event.actor ?? "You", event.role ?? "employee", event.entity, event.entity_id);
+  addActivity(
+    state,
+    event.action,
+    event.detail,
+    event.actor ?? "You",
+    event.role ?? "employee",
+    event.entity,
+    event.entity_id,
+  );
   event.notifications?.forEach((notification) => addNotification(state, notification));
 }
 
@@ -654,7 +681,9 @@ export function updateDemoGoal(id: string, patch: Partial<DemoGoal>) {
 export function archiveDemoGoal(id: string) {
   const state = readState();
   const goal = state.goals.find((item) => item.id === id);
-  state.goals = state.goals.map((item) => (item.id === id ? { ...item, status: "archived" } : item));
+  state.goals = state.goals.map((item) =>
+    item.id === id ? { ...item, status: "archived" } : item,
+  );
   recordWorkflow(state, {
     action: "Goal archived",
     detail: goal?.title ?? id,
@@ -707,8 +736,15 @@ export function submitDemoSheet() {
 export function decideDemoSheet(action: "approve" | "reject" | "rework") {
   const state = readState();
   if (action === "approve") {
-    state.sheet = { ...state.sheet, status: "approved", approved_at: nowIso(), approved_by: "demo-manager" };
-    state.goals = state.goals.map((goal) => (goal.status === "archived" ? goal : { ...goal, status: "locked" }));
+    state.sheet = {
+      ...state.sheet,
+      status: "approved",
+      approved_at: nowIso(),
+      approved_by: "demo-manager",
+    };
+    state.goals = state.goals.map((goal) =>
+      goal.status === "archived" ? goal : { ...goal, status: "locked" },
+    );
     recordWorkflow(state, {
       action: "Goal sheet approved",
       detail: "Manager approved and locked the submitted goals",
@@ -740,7 +776,9 @@ export function decideDemoSheet(action: "approve" | "reject" | "rework") {
   }
   if (action === "reject") {
     state.sheet = { ...state.sheet, status: "draft", rework_comment: "Rejected in demo review" };
-    state.goals = state.goals.map((goal) => (goal.status === "archived" ? goal : { ...goal, status: "draft" }));
+    state.goals = state.goals.map((goal) =>
+      goal.status === "archived" ? goal : { ...goal, status: "draft" },
+    );
     recordWorkflow(state, {
       action: "Goal sheet rejected",
       detail: "Returned to draft for correction",
@@ -762,7 +800,11 @@ export function decideDemoSheet(action: "approve" | "reject" | "rework") {
     });
   }
   if (action === "rework") {
-    state.sheet = { ...state.sheet, status: "draft", rework_comment: "Please sharpen KPIs and confirm owner milestones." };
+    state.sheet = {
+      ...state.sheet,
+      status: "draft",
+      rework_comment: "Please sharpen KPIs and confirm owner milestones.",
+    };
     state.goals = state.goals.map((goal) =>
       goal.status === "archived" ? goal : { ...goal, status: "rework_requested" },
     );
@@ -834,19 +876,44 @@ export function upsertDemoCheckIn(input: Omit<DemoCheckIn, "id"> & { id?: string
   return next;
 }
 
+export function updateDemoCheckInFeedback(id: string, feedback: string) {
+  const state = readState();
+  state.checkIns = state.checkIns.map((checkIn) =>
+    checkIn.id === id ? { ...checkIn, manager_feedback: feedback } : checkIn,
+  );
+
+  const checkIn = state.checkIns.find((c) => c.id === id);
+  const goal = state.goals.find((item) => item.id === checkIn?.goal_id);
+
+  if (checkIn) {
+    recordWorkflow(state, {
+      action: "Manager feedback provided",
+      detail: `Feedback added for ${checkIn.quarter} check-in`,
+      actor: "Sam Carter",
+      role: "manager",
+      entity: "check_in",
+      entity_id: id,
+      notifications: [
+        {
+          role: "employee",
+          title: "New manager feedback",
+          message: `Your manager left feedback on your ${checkIn.quarter} update for ${goal?.title ?? "a goal"}.`,
+          href: "/employee/checkins",
+          severity: "info",
+          entity: "check_in",
+          entity_id: id,
+        },
+      ],
+    });
+  }
+
+  writeState(state);
+}
+
 export function getDemoApprovalSheets() {
   const state = readState();
   if (state.sheet.status !== "submitted") {
-    const demoSubmitted = seedState().goals.map((goal) => ({ ...goal, status: "submitted" as GoalStatus }));
-    return [
-      {
-        ...state.sheet,
-        id: "demo-pending-sheet",
-        status: "submitted" as GoalStatus,
-        profiles: { full_name: "Alex Morgan", department: "Engineering" },
-        goals: demoSubmitted,
-      },
-    ];
+    return [];
   }
   return [
     {
@@ -861,7 +928,9 @@ export function getDemoUsers() {
   return readState().users;
 }
 
-export function inviteDemoUser(input: Omit<DemoUser, "id" | "created_at" | "status"> & Partial<Pick<DemoUser, "status">>) {
+export function inviteDemoUser(
+  input: Omit<DemoUser, "id" | "created_at" | "status"> & Partial<Pick<DemoUser, "status">>,
+) {
   const state = readState();
   const user: DemoUser = {
     ...input,
@@ -906,7 +975,12 @@ export function updateDemoUser(id: string, patch: Partial<DemoUser>) {
     entity_id: id,
     notifications: [
       {
-        role: updated?.role === "manager" ? "manager" : updated?.role === "admin" ? "admin" : "employee",
+        role:
+          updated?.role === "manager"
+            ? "manager"
+            : updated?.role === "admin"
+              ? "admin"
+              : "employee",
         title: "Workspace access updated",
         message: "HR updated your role, department, or account status.",
         href: "/settings",
@@ -949,7 +1023,10 @@ export function getDemoAuditLogs() {
     created_at: item.created_at,
     actor_id: item.actor,
     goal_id: item.entity_id ?? null,
-    action: item.action.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""),
+    action: item.action
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_|_$/g, ""),
     field: item.entity ?? "workflow",
     old_value: null,
     new_value: item.detail,
@@ -960,7 +1037,9 @@ export function getDemoEscalations() {
   return readState().escalations;
 }
 
-export function createDemoEscalation(input: Pick<DemoEscalation, "owner" | "department" | "type" | "severity" | "summary">) {
+export function createDemoEscalation(
+  input: Pick<DemoEscalation, "owner" | "department" | "type" | "severity" | "summary">,
+) {
   const state = readState();
   const escalation: DemoEscalation = {
     ...input,
@@ -1012,12 +1091,21 @@ export function updateDemoEscalation(id: string, patch: Partial<DemoEscalation>,
       ...patch,
       comments: comment
         ? [
-            { id: makeId("esc-comment"), author: "Jordan Lee", body: comment, created_at: nowIso() },
+            {
+              id: makeId("esc-comment"),
+              author: "Jordan Lee",
+              body: comment,
+              created_at: nowIso(),
+            },
             ...escalation.comments,
           ]
         : escalation.comments,
       history: [
-        { id: makeId("esc-history"), action: patch.status ? `Status changed to ${patch.status}` : "Escalation updated", created_at: nowIso() },
+        {
+          id: makeId("esc-history"),
+          action: patch.status ? `Status changed to ${patch.status}` : "Escalation updated",
+          created_at: nowIso(),
+        },
         ...escalation.history,
       ],
     };
@@ -1076,10 +1164,16 @@ export function getDemoPermissions() {
   return readState().permissions;
 }
 
-export function updateDemoPermission(role: DemoPermissionRole["role"], permission: string, enabled: boolean) {
+export function updateDemoPermission(
+  role: DemoPermissionRole["role"],
+  permission: string,
+  enabled: boolean,
+) {
   const state = readState();
   state.permissions = state.permissions.map((item) =>
-    item.role === role ? { ...item, permissions: { ...item.permissions, [permission]: enabled } } : item,
+    item.role === role
+      ? { ...item, permissions: { ...item.permissions, [permission]: enabled } }
+      : item,
   );
   recordWorkflow(state, {
     action: "Permission updated",
@@ -1105,18 +1199,30 @@ export function getEnterpriseSnapshot() {
   const state = readState();
   const activeGoals = state.goals.filter((goal) => goal.status !== "archived");
   const submitted = activeGoals.filter((goal) => goal.status === "submitted").length;
-  const approved = activeGoals.filter((goal) => goal.status === "approved" || goal.status === "locked").length;
-  const checkInsSubmitted = state.checkIns.filter((checkIn) => Boolean(checkIn.submitted_at)).length;
+  const approved = activeGoals.filter(
+    (goal) => goal.status === "approved" || goal.status === "locked",
+  ).length;
+  const checkInsSubmitted = state.checkIns.filter((checkIn) =>
+    Boolean(checkIn.submitted_at),
+  ).length;
   const departments = Array.from(new Set(state.users.map((user) => user.department)));
   const departmentData = departments.map((department) => {
-    const employees = state.users.filter((user) => user.department === department && user.role === "employee").length;
-    const progress = department === "Engineering" ? (approved ? 88 : 76) : department === "People Ops" ? 91 : 79;
+    const employees = state.users.filter(
+      (user) => user.department === department && user.role === "employee",
+    ).length;
+    const progress =
+      department === "Engineering" ? (approved ? 88 : 76) : department === "People Ops" ? 91 : 79;
     return {
       department,
       employees,
       progress,
-      approvals: department === "Engineering" ? Math.max(1, submitted) : Math.max(1, Math.round(employees / 2)),
-      escalations: state.escalations.filter((item) => item.department === department && item.status !== "resolved").length,
+      approvals:
+        department === "Engineering"
+          ? Math.max(1, submitted)
+          : Math.max(1, Math.round(employees / 2)),
+      escalations: state.escalations.filter(
+        (item) => item.department === department && item.status !== "resolved",
+      ).length,
     };
   });
   return {
@@ -1130,13 +1236,20 @@ export function getEnterpriseSnapshot() {
     settings: state.orgSettings,
     permissions: state.permissions,
     kpis: {
-      employees: state.users.filter((user) => user.role === "employee" && user.status !== "deactivated").length,
-      managers: state.users.filter((user) => user.role === "manager" && user.status !== "deactivated").length,
-      admins: state.users.filter((user) => user.role === "admin" && user.status !== "deactivated").length,
+      employees: state.users.filter(
+        (user) => user.role === "employee" && user.status !== "deactivated",
+      ).length,
+      managers: state.users.filter(
+        (user) => user.role === "manager" && user.status !== "deactivated",
+      ).length,
+      admins: state.users.filter((user) => user.role === "admin" && user.status !== "deactivated")
+        .length,
       goals: activeGoals.length,
       submitted,
       approved,
-      checkInCoverage: activeGoals.length ? Math.round((checkInsSubmitted / activeGoals.length) * 100) : 0,
+      checkInCoverage: activeGoals.length
+        ? Math.round((checkInsSubmitted / activeGoals.length) * 100)
+        : 0,
       openEscalations: state.escalations.filter((item) => item.status !== "resolved").length,
       unreadNotifications: state.notifications.filter((item) => !item.read).length,
     },

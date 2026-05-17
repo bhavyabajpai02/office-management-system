@@ -10,14 +10,7 @@ interface StatCardProps {
   className?: string;
 }
 
-export function StatCard({
-  label,
-  value,
-  hint,
-  icon,
-  trend,
-  className,
-}: StatCardProps) {
+export function StatCard({ label, value, hint, icon, trend, className }: StatCardProps) {
   return (
     <Card
       className={cn(
@@ -37,12 +30,7 @@ export function StatCard({
       <div className="mt-3 flex min-h-4 items-center justify-between gap-2 text-xs">
         {hint && <span className="text-muted-foreground">{hint}</span>}
         {trend && (
-          <span
-            className={cn(
-              "font-medium",
-              trend.positive ? "text-success" : "text-destructive",
-            )}
-          >
+          <span className={cn("font-medium", trend.positive ? "text-success" : "text-destructive")}>
             {trend.value}
           </span>
         )}
